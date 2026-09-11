@@ -46,6 +46,9 @@
     app.router.register(game.id, container => app.ui.placeholder(container, game));
   });
   app.router.register('checkin', app.checkin.render);
+  const securityDebug = new URLSearchParams(window.location.search);
+  app.router.register('security', container => app.security.render(container,
+    securityDebug.get('debug') === 'security' ? securityDebug.get('step') : 1));
 
   document.addEventListener('click', function (event) {
     const mute = event.target.closest('[data-mute]');
@@ -69,5 +72,5 @@
     });
     app.ui.syncAudio(channel);
   });
-  app.router.show('home', false);
+  app.router.show(securityDebug.get('debug') === 'security' ? 'security' : 'home', false);
 }(window.AirportRush));

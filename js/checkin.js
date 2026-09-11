@@ -15,7 +15,7 @@
     let correctSlotStreak = 0;
     container.innerHTML = `
       <section class="checkin-screen" aria-label="Check-in: Affirmative">
-        <div class="checkin-question"><img class="question-panel-art" src="assets/images/question_panel.png" alt=""><span class="checkin-question-number"></span><p id="checkin-sentence" aria-live="polite"></p><p class="checkin-feedback" role="status"></p></div>
+        <div class="checkin-question"><p class="checkin-instruction">Choose the correct verb.</p><img class="question-panel-art" src="assets/images/question_panel.png" alt=""><span class="checkin-question-number"></span><p id="checkin-sentence" aria-live="polite"></p><p class="checkin-feedback" role="status"></p></div>
         <div class="checkin-baggage" role="group" aria-labelledby="checkin-sentence"></div>
       </section>`;
     const root = container.querySelector('.checkin-screen');

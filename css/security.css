@@ -1,0 +1,32 @@
+/* All presentation rules are scoped to SECURITY. Stage coordinates are 1440 × 810. */
+.security-screen { position: absolute; inset: 0; overflow: hidden; background: #edf2f4 url('../assets/images/airport_security.png') center / 100% 100% no-repeat; }
+.app-shell:has(.security-screen) .toolbar { top: -22px; }
+.security-question { position: absolute; top: 80px; left: 50%; width: 960px; aspect-ratio: 3 / 1; transform: translateX(-50%); color: #fff; }
+.security-question-art { display: block; width: 100%; height: 100%; object-fit: contain; }
+#security-sentence { position: absolute; inset: 34% 13% 38%; display: grid; place-items: center; padding: 8px 68px; text-align: center; font-size: 27px; line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
+.security-number { position: absolute; left: 14%; top: 34%; width: 5%; height: 28%; display: grid; place-items: center; color: #ffe075; font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.security-number[hidden] { display: none; }
+.security-instruction { position: absolute; left: 50%; bottom: calc(71% + 10px); width: max-content; transform: translateX(-50%); margin: 0; padding: 8px 16px; border: 1px solid #f4c442; border-radius: 8px; background: #082a49ed; text-align: center; color: #fff; font-size: 19px; line-height: 1.2; font-weight: 600; }
+.security-options { position: absolute; inset: 0; pointer-events: none; }
+.security-object { position: absolute; left: calc(780px + var(--slot) * 200px); top: calc(430px + var(--slot) * 24px); width: 200px; height: 210px; border: 0; padding: 0; background: transparent; transform-origin: center bottom; pointer-events: auto; }
+.security-object > img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(4px 8px 4px #0006); }
+.security-object > span { position: absolute; top: 100%; left: -10px; width: 220px; min-height: 58px; display: grid; place-items: center; padding: 8px; border: 2px solid #eac04c; border-radius: 6px; color: #fff; background: #082a49f5; font-size: 19px; line-height: 1.15; text-align: center; }
+.security-object:not(:disabled):hover > img { filter: drop-shadow(0 0 6px #ffe075); }
+.security-object:disabled { cursor: default; }
+.security-object.is-selected > span { visibility: hidden; }
+.security-object.is-waiting { visibility: hidden; }
+.security-object.is-wrong { animation: security-shake 300ms ease; }
+.security-feedback { position: absolute; left: 708px; top: 279px; width: 300px; min-height: 34px; margin: 0; color: #a8ffca; font-size: 23px; font-weight: 800; text-align: center; text-shadow: 0 2px 4px #061d34, 0 0 8px #061d34; }
+.security-feedback.is-wrong { color: #ffaaa3; }
+.security-belt-motion { position: absolute; inset: 0; pointer-events: none; opacity: 0.14; clip-path: polygon(50% 62%, 64% 62%, 100% 87%, 100% 94%, 65% 88%); background: repeating-linear-gradient(174deg, transparent 0 18px, #cbd8df 19px 21px, transparent 22px 30px); animation: security-belt 900ms linear infinite; }
+.security-scan { position: absolute; left: 722px; top: 341px; width: 244px; height: 158px; pointer-events: none; opacity: 0; border: 2px solid #7deaff; background: repeating-linear-gradient(0deg, #4ed5ff12 0 9px, #96ecff55 10px 12px); box-shadow: inset 0 0 35px #43d6ff; }
+.security-scan.is-scanning { opacity: 1; animation: security-scan 400ms linear infinite; }
+.security-continue { position: absolute; left: 50%; top: 308px; transform: translateX(-50%); min-width: 230px; padding: 14px 26px; border: 2px solid #f4c442; border-radius: 10px; color: #fff7df; background: linear-gradient(#28618a, #082a49 65%, #061d34); box-shadow: inset 0 2px 1px #ffffff65, 0 4px 8px #0005; font-size: 21px; font-weight: 700; }
+.security-continue:hover { filter: brightness(1.15); }
+.security-continue:active { box-shadow: inset 0 2px 4px #0008; }
+.app-shell:has(.security-screen) .security-collected { color: #a8ffca; border: 1px solid #76ffac; border-radius: 6px; background: #0a493eaa; animation: security-stamp 350ms ease-out; }
+@keyframes security-belt { to { background-position: -20px -30px; } }
+@keyframes security-scan { 50% { filter: brightness(1.8); background-position: 0 24px; } }
+@keyframes security-shake { 25%, 75% { transform: translateX(-6px); } 50% { transform: translateX(6px); } }
+@keyframes security-stamp { from { transform: scale(1.35); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .security-belt-motion, .security-scan.is-scanning, .security-object.is-wrong, .app-shell:has(.security-screen) .security-collected { animation: none; } }
