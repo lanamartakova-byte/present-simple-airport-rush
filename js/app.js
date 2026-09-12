@@ -47,6 +47,13 @@
   });
   app.router.register('checkin', app.checkin.render);
   const securityDebug = new URLSearchParams(window.location.search);
+  let questionsDebugStep = securityDebug.get('debug') === 'questions' ? securityDebug.get('step') || 1 : 1;
+  app.router.register('questions', container => {
+    const start = questionsDebugStep;
+    questionsDebugStep = 1;
+    return app.questions.render(container, start);
+  });
+  app.router.register('final', app.gateFinal.render);
   app.router.register('security', container => app.security.render(container,
     securityDebug.get('debug') === 'security' ? securityDebug.get('step') : 1));
 
@@ -72,5 +79,5 @@
     });
     app.ui.syncAudio(channel);
   });
-  app.router.show(securityDebug.get('debug') === 'security' ? 'security' : 'home', false);
+  app.router.show(securityDebug.get('debug') === 'checkin' ? 'checkin' : securityDebug.get('debug') === 'final' ? 'final' : securityDebug.get('debug') === 'questions' ? 'questions' : securityDebug.get('debug') === 'security' ? 'security' : 'home', false);
 }(window.AirportRush));

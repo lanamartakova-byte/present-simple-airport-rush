@@ -274,62 +274,396 @@ CLEARED**.
 
 Present Simple questions. **15 заданий.**
 
-Нет multiple choice. Пользователь самостоятельно печатает вопрос.
+Главная учебная цель GAME 3 --- самостоятельное построение вопросов в Present Simple с **Do / Does**, включая WH-questions с `where`, `what time`, `how much`, `how often`.
 
-Проверка: - ignore case; - trim leading/trailing whitespace; - normalize
-repeated spaces; - финальный `?` optional.
+GAME 3 должна ощущаться не как обычный worksheet с полем ввода, а как реальный поиск **Gate B24**. Правильно построенный вопрос запускает видимое действие в аэропорту и продвигает игрока по маршруту.
 
-Не принимать грамматически неправильные варианты.
+### 11.1. Общая механика
 
-При ошибке: - INCORRECT / TRY AGAIN; - −1 жизнь; - input полностью
-очищается; - никаких подсказок; - никаких выделений; - правильный ответ
-не показывается; - остаётся тот же вопрос.
+Основной формат --- **TYPE**: пользователь самостоятельно печатает полный вопрос.
 
-### Движение GAME 3
+Дополнительные форматы используются только для разнообразия и не должны превращать GAME 3 в multiple choice:
 
-Questions 1--4: **INFORMATION DESK** --- персонаж у стойки информации.
+- **TYPE** --- самостоятельно напечатать полный вопрос;
+- **BUILD** --- собрать вопрос из перемешанных карточек/частей;
+- **SPOT & FIX** --- увидеть грамматически неправильный вопрос и самостоятельно переписать его правильно в input.
 
-Questions 5--8: **MOVING WALKWAY** --- персонаж движется по travelator.
+Баланс на 15 заданий:
+- **10 TYPE**;
+- **3 BUILD**;
+- **2 SPOT & FIX**;
+- **0 обычных multiple choice**.
 
-Questions 9--12: **AIRPORT SHUTTLE** --- персонаж едет на shuttle/train;
-терминал движется за окнами; можно показывать B8 → B12 → B16 → B20.
+Для TYPE и SPOT & FIX проверка:
+- ignore case;
+- trim leading/trailing whitespace;
+- normalize repeated spaces;
+- финальный `?` optional;
+- не принимать грамматически неправильные варианты.
 
-Questions 13--15: **GATES** --- персонаж идёт по терминалу; B20 → B22 →
-B24.
+При ошибке:
+1. показать **INCORRECT / TRY AGAIN**;
+2. проиграть `wrong.wav`;
+3. −1 жизнь;
+4. для TYPE / SPOT & FIX полностью очистить input;
+5. для BUILD вернуть неверно размещённую карточку/сборку в исходное состояние;
+6. никаких подсказок;
+7. никаких выделений правильной части;
+8. правильный ответ не показывать;
+9. остаётся то же задание.
 
-После №15 показать **GATE B24 FOUND** и сразу запустить FINAL CALL. Не
-возвращаться на HOME.
+Переход к следующему заданию только после правильного ответа.
 
-### Задания GAME 3
+После третьей ошибки GAME 3 автоматически перезапускается с Question 1 и снова с 3 жизнями.
 
-1.  `(this bus / go / to Terminal 2)` → **Does this bus go to Terminal
-    2?**
-2.  `(you / accept / cards)` → **Do you accept cards?**
-3.  `What time __________? (the flight / leave)` → **What time does the
-    flight leave?**
-4.  `Where __________? (the shuttle / stop)` → **Where does the shuttle
-    stop?**
-5.  `(the airport / have / free Wi-Fi)` → **Does the airport have free
-    Wi-Fi?**
-6.  `Where __________? (passengers / collect / their luggage)` → **Where
-    do passengers collect their luggage?**
-7.  `(this café / serve / breakfast)` → **Does this café serve
-    breakfast?**
-8.  `What time __________? (the shops / close)` → **What time do the
-    shops close?**
-9.  `(I / need / my passport here)` → **Do I need my passport here?**
-10. `Where __________? (the airport bus / leave from)` → **Where does
-    the airport bus leave from?**
-11. `(this train / stop / at the airport)` → **Does this train stop at
-    the airport?**
-12. `How much __________? (a taxi / to the city centre / cost)` → **How
-    much does a taxi to the city centre cost?**
-13. `(they / check / passports here)` → **Do they check passports
-    here?**
-14. `How often __________? (the shuttle / run)` → **How often does the
-    shuttle run?**
-15. `Where __________? (I / show / my boarding pass)` → **Where do I
-    show my boarding pass?**
+### 11.2. Главное правило интерактива и движения
+
+Во время выполнения задания сцена не должна выглядеть полностью замершей. Допустимы лёгкие фоновые движения: airport displays, индикаторы, travelator, движение терминала за окнами shuttle, световые элементы и т. п.
+
+После каждого правильного ответа обязательно происходит короткое сюжетное действие примерно 1--2 секунды. Игрок должен успеть увидеть результат своего вопроса до появления следующего задания.
+
+Не использовать искусственное «скольжение» статичного PNG-персонажа по экрану как имитацию ходьбы. Если натуральную ходьбу нельзя сделать убедительно, движение создаётся за счёт окружения, указателей, транспорта, табло и переходов между зонами.
+
+Правильный вопрос должен ощущаться как действие:
+**спросил → аэропорт ответил/отреагировал → открылось направление или новая информация → игрок приблизился к Gate B24.**
+
+### 11.3. UI GAME 3
+
+Верхняя левая HUD-плашка: утверждённый asset **FIND YOUR GATE / Questions** с динамическими сердцами в предназначенной для них области. Не накладывать поверх asset дублирующие `FIND YOUR GATE` или `Questions`.
+
+YOUR JOURNEY:
+- BOARDING PASS ✓
+- SECURITY ✓
+- GATE B24 = current
+
+Инструкция зависит от формата:
+- TYPE / BUILD: **MAKE A QUESTION**
+- SPOT & FIX: **FIX THE QUESTION**
+
+Инструкция находится на небольшой аккуратной игровой плашке.
+
+Основная task panel показывает номер `1/15 ... 15/15`, ситуацию/миссию и грамматическую подсказку.
+
+Для TYPE и SPOT & FIX используется input + CHECK.
+Для BUILD используются кликабельные/перетаскиваемые карточки; обычных вариантов A/B/C нет.
+
+**Верхняя safe zone GAME 3:** не размещать там сюжетные таблички, shuttle, route markers или другие временные игровые объекты. Верх экрана зарезервирован под постоянные HUD-плашки, жизни, YOUR JOURNEY, HOME/audio controls и instruction/task UI. Сюжетные знаки (`terminal2_sign.png` и HTML/CSS direction signs) появляются ниже этой зоны и не должны создавать визуальное нагромождение.
+
+### 11.4. Маршрут GAME 3
+
+Questions 1--4: **INFORMATION DESK** --- игрок собирает первоначальную информацию и получает направление к следующей зоне.
+
+Questions 5--8: **MOVING WALKWAY** --- путь по терминалу; travelator и элементы окружения создают постоянное мягкое движение.
+
+Questions 9--12: **AIRPORT SHUTTLE** --- отдельная наружная сцена у Shuttle Stop на `airport_shuttle.png`. Отдельный `airport_shuttle_bus.png` въезжает по дороге слева/из центральной части кадра вправо, останавливается у Shuttle Stop и используется как главный движущийся объект этапа. Маршрут визуально проходит B8 → B12 → B16 → B20 через route display/указатели и лёгкое движение окружения.
+
+Questions 13--15: **GATES** --- финальный поиск: B20 → B22 → B24.
+
+После Question 15 показать **GATE B24 FOUND ✓**, обновить YOUR JOURNEY до `GATE B24 ✓`, затем автоматически запустить FINAL CALL. На HOME перед FINAL CALL не возвращаться.
+
+### 11.5. Задания и интерактив GAME 3
+
+#### 1/15 --- INFORMATION DESK --- TYPE
+
+Ситуация:
+**You need to get to Terminal 2. Ask for help.**
+
+Prompt:
+`(this bus / go / to Terminal 2)`
+
+Correct:
+**Does this bus go to Terminal 2?**
+
+Во время ввода: небольшой airport/terminal display может мягко переключать `T1 / T2 / T3`.
+
+После correct:
+- `correct.wav`;
+- сотрудник/информационная зона визуально реагирует без сложной анимации персонажа;
+- появляется/загорается отдельный asset `terminal2_sign.png` (**TERMINAL 2 →**) в свободной игровой зоне ниже постоянного верхнего UI;
+- НЕ показывать и НЕ анимировать автобус внутри `airport_terminal.png`: это внутренняя сцена терминала;
+- затем Question 2.
+
+#### 2/15 --- INFORMATION DESK --- BUILD
+
+Ситуация:
+**You want to pay by card. Ask.**
+
+Карточки в перемешанном порядке:
+`cards` / `Do` / `accept` / `you`
+
+Correct:
+**Do you accept cards?**
+
+После correct:
+- карточки фиксируются в правильном порядке;
+- короткая положительная подсветка;
+- на небольшом payment/card terminal загорается зелёный ✓ / **ACCEPTED**;
+- затем Question 3.
+
+#### 3/15 --- INFORMATION DESK --- TYPE
+
+Ситуация:
+**You need to know when your flight leaves. Ask.**
+
+Prompt:
+`What time __________? (the flight / leave)`
+
+Correct:
+**What time does the flight leave?**
+
+Во время ввода: departure display слегка «живёт»/переключается.
+
+После correct:
+- airport-board flip/refresh animation;
+- появляется и подсвечивается:
+  **AR725 · LONDON · 18:45**;
+- затем Question 4.
+
+#### 4/15 --- INFORMATION DESK --- TYPE
+
+Ситуация:
+**You need to find the shuttle. Ask.**
+
+Prompt:
+`Where __________? (the shuttle / stop)`
+
+Correct:
+**Where does the shuttle stop?**
+
+После correct:
+- загорается текстовый/HTML-CSS указатель **SHUTTLE →**;
+- не запускать автобус внутри терминала;
+- короткий переход из INFORMATION DESK в MOVING WALKWAY на том же `airport_terminal.png`;
+- затем Question 5.
+
+#### 5/15 --- MOVING WALKWAY --- TYPE
+
+Ситуация:
+**You need Wi-Fi on the way. Ask.**
+
+Prompt:
+`(the airport / have / free Wi-Fi)`
+
+Correct:
+**Does the airport have free Wi-Fi?**
+
+Во время ввода: travelator медленно движется; движение должно быть мягким и ненавязчивым.
+
+После correct:
+- загорается **FREE WI-FI ✓**;
+- короткая анимация Wi-Fi waves;
+- затем Question 6.
+
+#### 6/15 --- MOVING WALKWAY --- BUILD
+
+Ситуация:
+**You need to know where passengers collect their luggage. Ask.**
+
+Карточки:
+`Where` / `do` / `passengers` / `collect` / `their luggage`
+
+Correct:
+**Where do passengers collect their luggage?**
+
+После correct:
+- airport direction display перелистывается;
+- появляется **BAGGAGE CLAIM ←**;
+- стрелка мягко загорается;
+- затем Question 7.
+
+#### 7/15 --- MOVING WALKWAY --- TYPE
+
+Ситуация:
+**You want breakfast. Ask about the café.**
+
+Prompt:
+`(this café / serve / breakfast)`
+
+Correct:
+**Does this café serve breakfast?**
+
+После correct:
+- небольшая вывеска/индикатор café переключается на **BREAKFAST ✓**;
+- короткая световая реакция;
+- затем Question 8.
+
+#### 8/15 --- MOVING WALKWAY --- SPOT & FIX
+
+На дисплее показан неправильный вопрос:
+**What time does the shops close?**
+
+Instruction:
+**FIX THE QUESTION**
+
+Пользователь самостоятельно переписывает полный вопрос.
+
+Correct:
+**What time do the shops close?**
+
+После correct:
+- дисплей делает flip;
+- появляется **SHOPS CLOSE 22:00**;
+- travelator на короткий момент визуально ускоряется;
+- переход в AIRPORT SHUTTLE;
+- затем Question 9.
+
+#### 9/15 --- AIRPORT SHUTTLE --- TYPE
+
+Ситуация:
+**You are entering the shuttle area. Ask about your passport.**
+
+Prompt:
+`(I / need / my passport here)`
+
+Correct:
+**Do I need my passport here?**
+
+Во время ввода: наружная сцена `airport_shuttle.png` остаётся живой за счёт лёгких UI/route-индикаторов; отдельный `airport_shuttle_bus.png` может быть виден подъезжающим или стоящим у остановки, но не должен перекрывать task panel.
+
+После correct:
+- `airport_shuttle_bus.png` плавно подъезжает/доводит движение вправо и останавливается у Shuttle Stop;
+- короткая реакция route display;
+- route indicator показывает **NEXT → B8**;
+- затем Question 10.
+
+#### 10/15 --- AIRPORT SHUTTLE --- TYPE
+
+Prompt:
+`Where __________? (the airport bus / leave from)`
+
+Correct:
+**Where does the airport bus leave from?**
+
+После correct:
+- route display переключается **B8 → B12**;
+- создать ощущение продвижения лёгким CSS/JS-сдвигом route markers/окружения; не рисовать второй автобус;
+- `airport_shuttle_bus.png` остаётся единым отдельным движущимся shuttle asset;
+- затем Question 11.
+
+#### 11/15 --- AIRPORT SHUTTLE --- BUILD
+
+Карточки:
+`Does` / `this train` / `stop` / `at the airport`
+
+Correct:
+**Does this train stop at the airport?**
+
+После correct:
+- route display переключается **B12 → B16**;
+- короткий CSS/JS route-motion effect показывает продвижение к B16;
+- не добавлять новые растровые автобусы/транспорт;
+- затем Question 12.
+
+#### 12/15 --- AIRPORT SHUTTLE --- TYPE
+
+Prompt:
+`How much __________? (a taxi / to the city centre / cost)`
+
+Correct:
+**How much does a taxi to the city centre cost?**
+
+После correct:
+- route display переключается **B16 → B20**;
+- появляется/проходит **B20**;
+- `airport_shuttle_bus.png` визуально продолжает движение вправо и уезжает из сцены;
+- появляется **EXIT → GATES B20–B30**;
+- переход обратно на `airport_terminal.png` в GATES;
+- затем Question 13.
+
+#### 13/15 --- GATES --- TYPE
+
+Ситуация:
+**You arrive at Gate B20. Ask about passport checks.**
+
+Prompt:
+`(they / check / passports here)`
+
+Correct:
+**Do they check passports here?**
+
+Во время ввода: табло B20 и airport displays имеют лёгкую idle-анимацию.
+
+После correct:
+- **B20 ✓**;
+- загорается **B22 →**;
+- окружение/фон плавно смещается так, чтобы ощущалось продвижение по терминалу, без скольжения статичного персонажа;
+- затем Question 14.
+
+#### 14/15 --- GATES --- SPOT & FIX
+
+На дисплее неправильный вопрос:
+**How often do the shuttle run?**
+
+Instruction:
+**FIX THE QUESTION**
+
+Пользователь самостоятельно переписывает полный вопрос.
+
+Correct:
+**How often does the shuttle run?**
+
+После correct:
+- **B22 ✓**;
+- впереди начинает мигать/подсвечиваться **B24 →**;
+- ещё один короткий переход вперёд по терминалу;
+- затем Question 15.
+
+#### 15/15 --- GATES --- TYPE
+
+Ситуация:
+**You are almost there. Ask where to show your boarding pass.**
+
+Prompt:
+`Where __________? (I / show / my boarding pass)`
+
+Correct:
+**Where do I show my boarding pass?**
+
+После correct:
+1. `correct.wav`;
+2. **B24 →** начинает мигать;
+3. Gate B24 / его табло визуально становится главным объектом сцены;
+4. status board делает airport flip:
+   `ON TIME` → `BOARDING` → `FINAL CALL`;
+5. проигрывается `airport_ding.wav`;
+6. YOUR JOURNEY обновляется:
+   BOARDING PASS ✓ → SECURITY ✓ → GATE B24 ✓;
+7. показать **GATE B24 FOUND ✓**;
+8. после короткой паузы автоматически запустить FINAL CALL.
+
+### 11.6. Технические требования к интерактиву GAME 3
+
+- Не добавлять тяжёлые animation frameworks.
+- Движение делать CSS/JS (`transform`, `translate`, `opacity`, лёгкие flip/slide effects).
+- Не создавать отдельный тяжёлый asset для каждого вопроса, если эффект можно сделать HTML/CSS.
+- Использовать утверждённые backgrounds:
+  - `airport_terminal.png` --- НОВАЯ очищенная внутренняя сцена терминала для INFORMATION DESK, MOVING WALKWAY и GATES; верхняя зона изображения специально очищена от крупных рекламных/flight-board/overhead sign элементов, чтобы не конфликтовать с постоянным HUD;
+  - `airport_shuttle.png` --- НОВАЯ наружная сцена Terminal 2 / Shuttle Stop с дорогой справа; используется только для Questions 9--12.
+- Использовать новые отдельные assets:
+  - `airport_shuttle_bus.png` --- отдельный shuttle bus на прозрачном фоне, ориентирован вправо; анимировать CSS/JS поверх `airport_shuttle.png`;
+  - `terminal2_sign.png` --- отдельный знак **TERMINAL 2 →** на прозрачном фоне без верхних подвесов; показывать по сюжету, а не держать постоянно.
+- `airport_shuttle.png` и `airport_shuttle_bus.png` --- разные файлы: первый является background, второй --- отдельным движущимся объектом.
+- Не заставлять `airport_shuttle_bus.png` ехать внутри `airport_terminal.png`.
+- Не размещать сюжетные direction signs постоянно в верхней части экрана. Верх зарезервирован под постоянные HUD-плашки, YOUR JOURNEY, HOME/audio и instruction/task UI.
+- Остальные динамические указатели (`SHUTTLE →`, `BAGGAGE CLAIM ←`, `B22 →`, `B24 →`, route display, Wi-Fi, ACCEPTED и т. п.) по умолчанию делать HTML/CSS, если отдельный asset не будет согласован позже.
+- Не менять утверждённые 15 correct questions.
+- Ситуационные строки служат контекстом и не заменяют исходные grammar prompts.
+- Анимация correct не должна блокировать HOME/audio controls.
+- Во время correct animation не принимать повторные клики/submit.
+- После завершения animation переходить к следующему заданию автоматически.
+- Не сохранять прогресс GAME 3 в localStorage/cookies.
+
+### 11.7. DEBUG GAME 3
+
+Поддерживать:
+- `?debug=questions` --- Question 1;
+- `?debug=questions&step=5` --- начало MOVING WALKWAY;
+- `?debug=questions&step=9` --- начало AIRPORT SHUTTLE;
+- `?debug=questions&step=13` --- начало GATES;
+- `?debug=questions&step=15` --- последнее grammar-задание;
+- `?debug=final` --- FINAL CALL.
+
+Debug должен позволять тестировать каждую зону без ручного прохождения предыдущих вопросов и не должен менять обычное поведение игры.
 
 ## 12. FINAL CALL --- визуальная награда
 
@@ -378,6 +712,8 @@ airport_checkin.png
 airport_security.png
 airport_terminal.png
 airport_shuttle.png
+airport_shuttle_bus.png
+terminal2_sign.png
 traveler_walking.png
 traveler_running.png
 suitcase.png
@@ -395,8 +731,12 @@ backpack.png
 - `airport_home.png` — HOME;
 - `airport_checkin.png` — GAME 1 / CHECK-IN;
 - `airport_security.png` — GAME 2 / SECURITY;
-- `airport_terminal.png` — Information Desk, Moving Walkway и Gates в GAME 3, а также подходящие части FINAL CALL;
-- `airport_shuttle.png` — Questions 9–12 / airport shuttle.
+- `airport_terminal.png` — обновлённый очищенный внутренний фон GAME 3 для Information Desk, Moving Walkway и Gates; верх специально оставлен визуально спокойным под HUD и task UI; также может использоваться в подходящих частях FINAL CALL;
+- `airport_shuttle.png` — обновлённый наружный фон Terminal 2 / Shuttle Stop для Questions 9–12; на самом background нет автобуса, чтобы отдельный shuttle можно было анимировать.
+
+Новые GAME 3 assets:
+- `airport_shuttle_bus.png` — отдельный shuttle bus на прозрачном фоне, направлен вправо; используется только как анимируемый объект поверх `airport_shuttle.png`;
+- `terminal2_sign.png` — отдельная прозрачная табличка `TERMINAL 2 →` без подвесов; появляется по сюжету в игровой зоне ниже верхнего интерфейса.
 
 Персонаж:
 - `traveler_walking.png` — обычное движение по аэропорту;
