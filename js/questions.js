@@ -10,7 +10,7 @@
   const paths = {
     terminal: [[730,770], [795,760], [860,750]],
     exit: [[925,785,1.00], [825,693,.94], [725,601,.88], [625,509,.82]],
-    boarding: [[500,685,.60], [610,665,.60], [710,640,.60], [825,605,.60], [942,433,.58], [1060,264,.56]]
+    boarding: [[500,685,.60], [610,665,.60], [710,640,.60], [825,605,.60], [910,433,.58], [1060,264,.56]]
   };
   // Flat side-view road. All bus travel changes X only.
   const stops = [170, 270, 370, 470, 570, 1460];
@@ -246,6 +246,15 @@
         } else later(() => { index++; loadQuestion(true); }, 200);
       }, duration);
     }
+    function restartSection() {
+      // Q1–5: terminal/exit; Q6–10: shuttle; Q11–15: boarding.
+      index = index < 5 ? 0 : index < 10 ? 5 : 10;
+      lives = 3;
+      order = [];
+      deck = [];
+      exitPosition = null;
+      loadQuestion(true);
+    }
     function submit(event, selected) {
       event.preventDefault();
       event.stopPropagation();
@@ -263,7 +272,7 @@
         feedback.textContent = 'INCORRECT / TRY AGAIN';
         feedback.classList.add('is-wrong');
         later(() => {
-          if (lives === 0) { index = 0; lives = 3; loadQuestion(true); }
+          if (lives === 0) restartSection();
           else {
             lock(false);
             focusAttempt();

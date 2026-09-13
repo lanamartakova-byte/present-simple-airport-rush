@@ -122,14 +122,14 @@
   {
     "type": "fix",
     "situation": "",
-    "answer": "What time this flight leaves?",
-    "prompt": "What time does this flight leave?"
+    "answer": "Do they serve food on the plane?",
+    "prompt": "Does they serves food on the plane?"
   },
   {
     "type": "type",
     "situation": "One last question!",
-    "answer": "Do I need to show my boarding pass?",
-    "prompt": "(my boarding pass / I / need / to show)"
+    "answer": "Do I need to turn off my phone?",
+    "prompt": "(my phone / I / need / to turn off)"
   }
 ];
 }(window.AirportRush));
