@@ -182,7 +182,8 @@
   });
   app.router.register('checkin', app.checkin.render);
   const securityDebug = new URLSearchParams(window.location.search);
-  let questionsDebugStep = securityDebug.get('debug') === 'questions' ? securityDebug.get('step') || 1 : 1;
+  const questionsDebug = ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname) && securityDebug.get('debug') === 'questions';
+  let questionsDebugStep = questionsDebug ? securityDebug.get('step') || 1 : 1;
   app.router.register('questions', container => {
     const start = questionsDebugStep;
     questionsDebugStep = 1;
@@ -214,5 +215,5 @@
     });
     app.ui.syncAudio(channel);
   });
-  app.router.show(['checkin', 'checkin-last'].includes(securityDebug.get('debug')) ? 'checkin' : securityDebug.get('debug') === 'final' ? 'final' : securityDebug.get('debug') === 'questions' ? 'questions' : ['security', 'security-last'].includes(securityDebug.get('debug')) ? 'security' : 'home', false);
+  app.router.show(['checkin', 'checkin-last'].includes(securityDebug.get('debug')) ? 'checkin' : securityDebug.get('debug') === 'final' ? 'final' : questionsDebug ? 'questions' : ['security', 'security-last'].includes(securityDebug.get('debug')) ? 'security' : 'home', false);
 }(window.AirportRush));

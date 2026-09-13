@@ -50,6 +50,7 @@
 :is([data-zone="terminal"], [data-zone="exit"]) .questions-traveler-still { height: 346.139px; left: -119.287px; bottom: -8.415px; }
 :is([data-zone="terminal"], [data-zone="exit"]) .questions-traveler-walking { height: 378.172px; left: -116.552px; bottom: -6.091px; }
 :is([data-zone="terminal"], [data-zone="exit"]) .questions-traveler.is-walking { transition-duration: 1000ms, 180ms; }
+[data-zone="exit"] .questions-traveler.is-walking { transition-duration: var(--exit-walk-duration, 1667ms), 180ms; }
 /* Keep the larger character intact; the unchanged task panel renders above it. */
 :is([data-zone="terminal"], [data-zone="exit"]) .questions-world { clip-path: none; }
 

@@ -6,10 +6,10 @@
   function sentence(parts) {
     return parts.join(' ').replace(/ \?/g, '?');
   }
-  // Q1–10 retain their routes. Boarding has independent apron/stair anchors.
+  // Exit anchors share the destination center line; boarding has independent apron/stair anchors.
   const paths = {
     terminal: [[730,770], [795,760], [860,750]],
-    exit: [[925,785,1.00], [825,693,.94], [725,601,.88], [625,509,.82]],
+    exit: [[625,785,1.00], [625,693,.94], [625,601,.88], [625,509,.82]],
     boarding: [[500,685,.60], [610,665,.60], [710,640,.60], [825,605,.60], [910,433,.58], [1060,264,.56]]
   };
   // Flat side-view road. All bus travel changes X only.
@@ -216,9 +216,10 @@
     function story() {
       root.classList.add('is-correct');
       const zone = root.dataset.zone;
-      const duration = index < 10 ? (index === 9 ? 1800 : 1000) : travelTime;
+      const duration = zone === 'exit' ? 1667 : index < 10 ? (index === 9 ? 1800 : 1000) : travelTime;
       if (zone === 'shuttle') drive(stops[index - 5 + 1], duration);
       else {
+        if (zone === 'exit') traveler.style.setProperty('--exit-walk-duration', `${duration}ms`);
         setWalking(true);
         traveler.classList.add('is-walking');
         void traveler.offsetWidth;
