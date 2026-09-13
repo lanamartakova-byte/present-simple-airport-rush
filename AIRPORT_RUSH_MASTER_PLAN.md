@@ -347,7 +347,7 @@ YOUR JOURNEY:
 Для TYPE и SPOT & FIX используется input + CHECK.
 Для BUILD используются кликабельные/перетаскиваемые карточки; обычных вариантов A/B/C нет.
 
-**Верхняя safe zone GAME 3:** не размещать там сюжетные таблички, shuttle, route markers или другие временные игровые объекты. Верх экрана зарезервирован под постоянные HUD-плашки, жизни, YOUR JOURNEY, HOME/audio controls и instruction/task UI. Сюжетные знаки (`terminal2_sign.webp` и HTML/CSS direction signs) появляются ниже этой зоны и не должны создавать визуальное нагромождение.
+**Верхняя safe zone GAME 3:** не размещать там сюжетные таблички, shuttle, route markers или другие временные игровые объекты. Верх экрана зарезервирован под постоянные HUD-плашки, жизни, YOUR JOURNEY, HOME/audio controls и instruction/task UI. Сюжетные знаки (HTML/CSS direction signs) появляются ниже этой зоны и не должны создавать визуальное нагромождение.
 
 ### 11.4. Маршрут GAME 3
 
@@ -379,7 +379,6 @@ Correct:
 После correct:
 - `correct.mp3`;
 - сотрудник/информационная зона визуально реагирует без сложной анимации персонажа;
-- появляется/загорается отдельный asset `terminal2_sign.webp` (**TERMINAL 2 →**) в свободной игровой зоне ниже постоянного верхнего UI;
 - НЕ показывать и НЕ анимировать автобус внутри `airport_terminal.webp`: это внутренняя сцена терминала;
 - затем Question 2.
 
@@ -641,7 +640,6 @@ Correct:
   - `airport_shuttle.webp` --- НОВАЯ наружная сцена Terminal 2 / Shuttle Stop с дорогой справа; используется только для Questions 9--12.
 - Использовать новые отдельные assets:
   - `airport_shuttle_bus.webp` --- отдельный shuttle bus на прозрачном фоне, ориентирован вправо; анимировать CSS/JS поверх `airport_shuttle.webp`;
-  - `terminal2_sign.webp` --- отдельный знак **TERMINAL 2 →** на прозрачном фоне без верхних подвесов; показывать по сюжету, а не держать постоянно.
 - `airport_shuttle.webp` и `airport_shuttle_bus.webp` --- разные файлы: первый является background, второй --- отдельным движущимся объектом.
 - Не заставлять `airport_shuttle_bus.webp` ехать внутри `airport_terminal.webp`.
 - Не размещать сюжетные direction signs постоянно в верхней части экрана. Верх зарезервирован под постоянные HUD-плашки, YOUR JOURNEY, HOME/audio и instruction/task UI.
@@ -713,7 +711,6 @@ airport_security.webp
 airport_terminal.webp
 airport_shuttle.webp
 airport_shuttle_bus.webp
-terminal2_sign.webp
 traveler_walking.webp
 traveler_running.webp
 suitcase.webp
@@ -736,7 +733,6 @@ backpack.webp
 
 Новые GAME 3 assets:
 - `airport_shuttle_bus.webp` — отдельный shuttle bus на прозрачном фоне, направлен вправо; используется только как анимируемый объект поверх `airport_shuttle.webp`;
-- `terminal2_sign.webp` — отдельная прозрачная табличка `TERMINAL 2 →` без подвесов; появляется по сюжету в игровой зоне ниже верхнего интерфейса.
 
 Персонаж:
 - `traveler_walking.webp` — обычное движение по аэропорту;
