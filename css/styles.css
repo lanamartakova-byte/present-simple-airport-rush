@@ -30,7 +30,7 @@ h1:focus { outline: none; }
 .mute-button { grid-column: 3; grid-row: 1; position: relative; width: 34px; height: 34px; border: 1px solid #dfb84e; border-radius: 4px; color: #ffdb72; background: #123c5c; font-size: 22px; }
 .mute-button[aria-pressed="true"]::after { content: ''; position: absolute; width: 25px; height: 2px; background: #ab350f; transform: rotate(-45deg); left: 4px; top: 15px; }
 input[type="range"] { width: 90px; height: 28px; margin: 0; accent-color: #21766b; cursor: pointer; }
-.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #edf2f4 url('../assets/images/airport_home.png') center / 100% 100% no-repeat; isolation: isolate; }
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #edf2f4 url('../assets/images/airport_home.webp') center / 100% 100% no-repeat; isolation: isolate; }
 .home-screen { position: absolute; inset: 0; }
 /* Opaque live UI covers the matching text already present in the approved image. */
 .departure-board { position: absolute; left: 24.3%; top: 0; width: 40.3%; height: 33.5%; padding: 20px 30px; display: flex; flex-direction: column; justify-content: center; gap: 10px; background: #172126; color: #ffca59; border: 5px solid #646f71; box-shadow: 0 5px 12px #0003; }
@@ -58,7 +58,7 @@ input[type="range"] { width: 90px; height: 28px; margin: 0; accent-color: #21766
 .placeholder p { font-size: 20px; margin: 0; color: #53656c; }
 @media (prefers-reduced-motion: reduce) { .game-card { transition: none; } }
 
-.checkin-screen { position: absolute; inset: 0; overflow: hidden; background: #edf2f4 url('../assets/images/airport_checkin.png?v=1e3a3443dc14') center / 100% 100% no-repeat; }
+.checkin-screen { position: absolute; inset: 0; overflow: hidden; background: #edf2f4 url('../assets/images/airport_checkin.webp?v=1e3a3443dc14') center / 100% 100% no-repeat; }
 .checkin-hud, .journey-hud { position: relative; aspect-ratio: 3 / 1; flex: none; }
 .checkin-hud { width: 520px; }
 .journey-hud { width: 620px; }
@@ -100,7 +100,7 @@ input[type="range"] { width: 90px; height: 28px; margin: 0; accent-color: #21766
 .suitcase-word { position: absolute; inset: 41% 6% 28%; display: grid; place-items: center; padding: 0 2px; color: #172c35; font-size: 19px; font-weight: 700; line-height: 1; text-align: center; overflow-wrap: anywhere; }
 .suitcase-answer:not(:disabled):hover > img { filter: drop-shadow(0 0 5px #fff) drop-shadow(5px 9px 4px #0006); }
 .suitcase-answer:disabled { cursor: default; }
-.baggage-tag { position: absolute; top: 23%; left: 46%; padding: 8px 5px; border-top: 7px solid #398368; background: #fff; color: #234b40; font-size: 12px; font-weight: bold; transform: rotate(12deg); opacity: 0; }
+.baggage-tag { position: absolute; top: 65%; left: 46%; padding: 8px 5px; border-top: 7px solid #398368; background: #fff; color: #234b40; font-size: 12px; font-weight: bold; transform: rotate(12deg); opacity: 0; }
 .suitcase-answer.is-accepted .baggage-tag { opacity: 1; }
 .suitcase-answer.is-wrong { animation: baggage-shake 300ms ease; }
 .suitcase-group.is-departing { animation: baggage-group-depart 2200ms linear forwards; }
@@ -114,3 +114,10 @@ input[type="range"] { width: 90px; height: 28px; margin: 0; accent-color: #21766
 
 /* Invisible navigation over the existing panel artwork, including its chevron. */
 .checkin-question > .completion-panel-hit, .security-question > .completion-panel-hit { position: absolute; z-index: 1; inset: 29% 1% 33.15%; padding: 0; border: 0; background: transparent; box-shadow: none; cursor: pointer; }
+
+.suitcase-answer.is-duffel > img { position: absolute; left: 5%; bottom: 0; width: 90%; height: 100%; object-fit: contain; object-position: center bottom; }
+.suitcase-answer.is-duffel .suitcase-label { top: 80%; }
+
+.suitcase-answer.is-backpack > img { object-position: center bottom; transform: scale(.85); transform-origin: center bottom; }
+
+.suitcase-answer > img[src="assets/images/suitcase.webp"], .suitcase-answer > img[src="assets/images/suitcase_red.webp"], .suitcase-answer > img[src="assets/images/suitcase_yellow.webp"], .suitcase-answer > img[src="assets/images/suitcase_pink.webp"] { transform: scale(1.15); transform-origin: center bottom; }

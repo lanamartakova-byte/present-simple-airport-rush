@@ -1,28 +1,45 @@
 (function (app) {
   'use strict';
-  const suitcases = ['suitcase.png', 'suitcase_red.png', 'suitcase_yellow.png'];
+  const firstItems = ['suitcase_pink.webp', 'backpack_green.webp', 'duffel_purple.webp', 'backpack_brown.webp', 'duffel_black_white.webp'];
+  const baggageItems = ['suitcase.webp', 'duffel_purple.webp', 'suitcase_red.webp', 'suitcase_yellow.webp', 'duffel_black_white.webp', 'suitcase_pink.webp'];
+  const backpackItems = ['backpack.webp', 'backpack_green.webp', 'backpack_brown.webp'];
+  // Balanced visual slots by question: 0 = left, 1 = center, 2 = right.
+  const correctPositions = [0, 2, 1, 0, 1, 2, 2, 1, 0, 2, 0, 1, 1, 2, 0, 0, 1, 2, 1, 2];
 
   function render(container) {
     const questions = app.data.checkinQuestions;
+    // Visual cursors are independent of answer values, grading and answer slots.
+    let firstItemCursor = 0;
+    let rotationCursor = 0;
+    let baggageCursor = 0;
+    let backpackCursor = 0;
+    function nextItem() {
+      if (firstItemCursor < firstItems.length) return firstItems[firstItemCursor++];
+      // A seven-item rhythm shifts visuals between slots on successive rounds.
+      const backpackTurn = (rotationCursor++ % 7) % 2 === 1;
+      return backpackTurn
+        ? backpackItems[backpackCursor++ % backpackItems.length]
+        : baggageItems[baggageCursor++ % baggageItems.length];
+    }
+
     const debug = new URLSearchParams(window.location.search);
     const step = debug.get('debug') === 'checkin' ? Number(debug.get('step')) : 1;
     let index = Number.isInteger(step) && step >= 1 && step <= questions.length ? step - 1 : 0;
+    if (debug.get('debug') === 'checkin-last') index = questions.length - 1;
     let lives = 3;
     let busy = false;
     let disposed = false;
     const timers = new Set();
     let completionAnimation;
     let boardingPass;
-    let lastCorrectSlot = -1;
-    let correctSlotStreak = 0;
     container.innerHTML = `
       <section class="checkin-screen" aria-label="Check-in: Affirmative">
-        <div class="checkin-question"><p class="checkin-instruction">Choose the correct verb.</p><img class="question-panel-art" src="assets/images/question_panel.png" alt=""><span class="checkin-question-number"></span><p id="checkin-sentence" aria-live="polite"></p><p class="checkin-feedback" role="status"></p></div>
+        <div class="checkin-question"><p class="checkin-instruction">Choose the correct verb.</p><img class="question-panel-art" src="assets/images/question_panel.webp" alt=""><span class="checkin-question-number"></span><p id="checkin-sentence" aria-live="polite"></p><p class="checkin-feedback" role="status"></p></div>
         <div class="checkin-baggage" role="group" aria-labelledby="checkin-sentence"></div>
       </section>`;
     const root = container.querySelector('.checkin-screen');
     const hud = document.getElementById('screen-hud');
-    hud.innerHTML = `<div class="checkin-hud"><img src="assets/images/checkin_hud.png" alt="CHECK-IN: Affirmative"><div class="checkin-lives" role="status" aria-label="3 lives remaining"></div></div>${app.ui.journeyMarkup(0)}`;
+    hud.innerHTML = `<div class="checkin-hud"><img src="assets/images/checkin_hud.webp" alt="CHECK-IN: Affirmative"><div class="checkin-lives" role="status" aria-label="3 lives remaining"></div></div>${app.ui.journeyMarkup(0)}`;
     const unbindJourney = app.ui.bindJourneyItems(hud);
     const sentence = root.querySelector('#checkin-sentence');
     const questionNumber = root.querySelector('.checkin-question-number');
@@ -40,7 +57,7 @@
 
     function updateLives() {
       hearts.setAttribute('aria-label', `${lives} lives remaining`);
-      hearts.innerHTML = Array.from({ length: lives }, () => '<img src="assets/images/heart.png" alt="" aria-hidden="true">').join('');
+      hearts.innerHTML = Array.from({ length: lives }, () => '<img src="assets/images/heart.webp" alt="" aria-hidden="true">').join('');
     }
 
     function lock(value) {
@@ -62,35 +79,37 @@
         const j = Math.floor(Math.random() * (i + 1));
         [optionOrder[i], optionOrder[j]] = [optionOrder[j], optionOrder[i]];
       }
-      let correctSlot = optionOrder.findIndex(optionIndex => questions[index].options[optionIndex] === questions[index].answer);
-      if (correctSlot === lastCorrectSlot && correctSlotStreak >= 2) {
-        const otherSlots = optionOrder.map((_, slot) => slot).filter(slot => slot !== correctSlot);
-        const nextSlot = otherSlots[Math.floor(Math.random() * otherSlots.length)];
-        [optionOrder[correctSlot], optionOrder[nextSlot]] = [optionOrder[nextSlot], optionOrder[correctSlot]];
-        correctSlot = nextSlot;
-      }
-      correctSlotStreak = correctSlot === lastCorrectSlot ? correctSlotStreak + 1 : 1;
-      lastCorrectSlot = correctSlot;
       baggage.innerHTML = '';
       const group = document.createElement('div');
       group.className = 'suitcase-group';
       baggage.append(group);
-      optionOrder.forEach((approvedIndex, optionIndex) => {
+      const assets = optionOrder.map(() => nextItem());
+      const duffelSlot = assets.findIndex(asset => asset.startsWith('duffel_'));
+      const targetSlot = correctPositions[index];
+      // Allocate answers before pairing them with images, accounting for the
+      // subsequent whole-item swap that places a duffel in the center.
+      const sourceSlot = duffelSlot < 0 ? targetSlot
+        : targetSlot === 1 ? duffelSlot : targetSlot === duffelSlot ? 1 : targetSlot;
+      const correctSlot = optionOrder.findIndex(id => questions[index].options[id] === questions[index].answer);
+      [optionOrder[sourceSlot], optionOrder[correctSlot]] = [optionOrder[correctSlot], optionOrder[sourceSlot]];
+      const items = optionOrder.map((approvedIndex, slot) => ({ approvedIndex, asset: assets[slot] }));
+      if (duffelSlot !== -1 && duffelSlot !== 1) [items[1], items[duffelSlot]] = [items[duffelSlot], items[1]];
+      items.forEach(({ approvedIndex, asset }, optionIndex) => {
         const option = questions[index].options[approvedIndex];
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'suitcase-answer';
+        button.className = 'suitcase-answer' + (asset.startsWith('duffel_') ? ' is-duffel' : backpackItems.includes(asset) ? ' is-backpack' : '');
         button.dataset.option = approvedIndex;
         button.setAttribute('aria-label', option);
         button.style.setProperty('--slot', optionIndex);
         const img = document.createElement('img');
-        img.src = `assets/images/${suitcases[optionIndex % suitcases.length]}`;
+        img.src = `assets/images/${asset}`;
         img.alt = '';
         img.draggable = false;
         const label = document.createElement('span');
         label.className = 'suitcase-label';
         const labelImage = document.createElement('img');
-        labelImage.src = 'assets/images/answer_label.png';
+        labelImage.src = 'assets/images/answer_label.webp';
         labelImage.alt = '';
         labelImage.draggable = false;
         const word = document.createElement('span');
@@ -115,7 +134,7 @@
       feedback.textContent = '';
       boardingPass = document.createElement('img');
       boardingPass.className = 'checkin-boarding-pass';
-      boardingPass.src = 'assets/images/boarding_pass.png';
+      boardingPass.src = 'assets/images/boarding_pass.webp';
       boardingPass.alt = 'Boarding pass earned';
       // Decode before showing the reward so its visible pause includes the image.
       try { await boardingPass.decode(); } catch (_) { /* Allow cached/fallback rendering. */ }
@@ -176,8 +195,6 @@
           if (lives === 0) {
             index = 0;
             lives = 3;
-            lastCorrectSlot = -1;
-            correctSlotStreak = 0;
             loadQuestion(true);
             return;
           }

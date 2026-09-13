@@ -1,5 +1,5 @@
 /* All presentation rules are scoped to SECURITY. Stage coordinates are 1440 × 810. */
-.security-screen { position: absolute; inset: 0; overflow: hidden; background: #edf2f4 url('../assets/images/airport_security.png') center / 100% 100% no-repeat; }
+.security-screen { position: absolute; inset: 0; overflow: hidden; background: #edf2f4 url('../assets/images/airport_security.webp') center / 100% 100% no-repeat; }
 .app-shell:has(.security-screen) .toolbar { top: -22px; }
 .security-question { position: absolute; top: 80px; left: 50%; width: 960px; aspect-ratio: 3 / 1; transform: translateX(-50%); color: #fff; }
 .security-question-art { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -27,3 +27,9 @@
 @keyframes security-shake { 25%, 75% { transform: translateX(-6px); } 50% { transform: translateX(6px); } }
 @keyframes security-stamp { from { transform: scale(1.35); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .security-belt-motion, .security-scan.is-scanning, .security-object.is-wrong, .app-shell:has(.security-screen) .security-collected { animation: none; } }
+
+.security-object.is-duffel > img { width: 90%; margin-inline: auto; object-fit: contain; object-position: center bottom; }
+
+.security-object.is-backpack > img { transform: scale(.85); transform-origin: center bottom; }
+
+.security-object > img[src="assets/images/suitcase.webp"], .security-object > img[src="assets/images/suitcase_red.webp"], .security-object > img[src="assets/images/suitcase_yellow.webp"], .security-object > img[src="assets/images/suitcase_pink.webp"] { transform: scale(1.15); transform-origin: center bottom; }

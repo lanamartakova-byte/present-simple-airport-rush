@@ -86,26 +86,26 @@ assets/
 ```text
 assets/sounds/
   background_music.mp3
-  correct.wav
-  wrong.wav
-  click.wav
-  airport_ding.wav
-  reward.wav
-  seatbelt.wav
-  takeoff.wav
+  correct.mp3
+  wrong.mp3
+  click.mp3
+  airport_ding.mp3
+  reward.mp3
+  seatbelt.mp3
+  takeoff.mp3
 ```
 
 Не переименовывать и не заменять эти файлы без отдельного указания пользователя.
 
 Назначение:
 - `background_music.mp3` — постоянная фоновая музыка;
-- `correct.wav` — правильный ответ;
-- `wrong.wav` — неправильный ответ;
-- `click.wav` — UI-клики;
-- `airport_ding.wav` — airport/departure announcement cue, в том числе перед FINAL CALL;
-- `reward.wav` — появление Boarding Pass / награда;
-- `seatbelt.wav` — финальная авиационная часть;
-- `takeoff.wav` — взлёт самолёта в FINAL CALL.
+- `correct.mp3` — правильный ответ;
+- `wrong.mp3` — неправильный ответ;
+- `click.mp3` — UI-клики;
+- `airport_ding.mp3` — airport/departure announcement cue, в том числе перед FINAL CALL;
+- `reward.mp3` — появление Boarding Pass / награда;
+- `seatbelt.mp3` — финальная авиационная часть;
+- `takeoff.mp3` — взлёт самолёта в FINAL CALL.
 
 Начальные уровни громкости:
 - Music = `0.20`;
@@ -209,7 +209,7 @@ YOUR JOURNEY. Показать **CHECK-IN COMPLETE**.
 
 Present Simple negative. 20 заданий.
 
-Security/X-ray area. Conveyor визуально движется. Для разнообразия использовать существующие отдельные assets: три варианта suitcase, `security_tray.png` и `backpack.png`. Их можно чередовать между 20 заданиями.
+Security/X-ray area. Conveyor визуально движется. Для разнообразия использовать существующие отдельные assets: три варианта suitcase, `security_tray.webp` и `backpack.webp`. Их можно чередовать между 20 заданиями.
 
 Правильно: предмет движется по conveyor → заезжает внутрь X-ray scanner → исчезает внутри → краткий X-ray/scanning visual → **CLEARED ✓** → следующее задание.
 
@@ -303,7 +303,7 @@ GAME 3 должна ощущаться не как обычный worksheet с �
 
 При ошибке:
 1. показать **INCORRECT / TRY AGAIN**;
-2. проиграть `wrong.wav`;
+2. проиграть `wrong.mp3`;
 3. −1 жизнь;
 4. для TYPE / SPOT & FIX полностью очистить input;
 5. для BUILD вернуть неверно размещённую карточку/сборку в исходное состояние;
@@ -347,7 +347,7 @@ YOUR JOURNEY:
 Для TYPE и SPOT & FIX используется input + CHECK.
 Для BUILD используются кликабельные/перетаскиваемые карточки; обычных вариантов A/B/C нет.
 
-**Верхняя safe zone GAME 3:** не размещать там сюжетные таблички, shuttle, route markers или другие временные игровые объекты. Верх экрана зарезервирован под постоянные HUD-плашки, жизни, YOUR JOURNEY, HOME/audio controls и instruction/task UI. Сюжетные знаки (`terminal2_sign.png` и HTML/CSS direction signs) появляются ниже этой зоны и не должны создавать визуальное нагромождение.
+**Верхняя safe zone GAME 3:** не размещать там сюжетные таблички, shuttle, route markers или другие временные игровые объекты. Верх экрана зарезервирован под постоянные HUD-плашки, жизни, YOUR JOURNEY, HOME/audio controls и instruction/task UI. Сюжетные знаки (`terminal2_sign.webp` и HTML/CSS direction signs) появляются ниже этой зоны и не должны создавать визуальное нагромождение.
 
 ### 11.4. Маршрут GAME 3
 
@@ -355,7 +355,7 @@ Questions 1--4: **INFORMATION DESK** --- игрок собирает перво�
 
 Questions 5--8: **MOVING WALKWAY** --- путь по терминалу; travelator и элементы окружения создают постоянное мягкое движение.
 
-Questions 9--12: **AIRPORT SHUTTLE** --- отдельная наружная сцена у Shuttle Stop на `airport_shuttle.png`. Отдельный `airport_shuttle_bus.png` въезжает по дороге слева/из центральной части кадра вправо, останавливается у Shuttle Stop и используется как главный движущийся объект этапа. Маршрут визуально проходит B8 → B12 → B16 → B20 через route display/указатели и лёгкое движение окружения.
+Questions 9--12: **AIRPORT SHUTTLE** --- отдельная наружная сцена у Shuttle Stop на `airport_shuttle.webp`. Отдельный `airport_shuttle_bus.webp` въезжает по дороге слева/из центральной части кадра вправо, останавливается у Shuttle Stop и используется как главный движущийся объект этапа. Маршрут визуально проходит B8 → B12 → B16 → B20 через route display/указатели и лёгкое движение окружения.
 
 Questions 13--15: **GATES** --- финальный поиск: B20 → B22 → B24.
 
@@ -377,10 +377,10 @@ Correct:
 Во время ввода: небольшой airport/terminal display может мягко переключать `T1 / T2 / T3`.
 
 После correct:
-- `correct.wav`;
+- `correct.mp3`;
 - сотрудник/информационная зона визуально реагирует без сложной анимации персонажа;
-- появляется/загорается отдельный asset `terminal2_sign.png` (**TERMINAL 2 →**) в свободной игровой зоне ниже постоянного верхнего UI;
-- НЕ показывать и НЕ анимировать автобус внутри `airport_terminal.png`: это внутренняя сцена терминала;
+- появляется/загорается отдельный asset `terminal2_sign.webp` (**TERMINAL 2 →**) в свободной игровой зоне ниже постоянного верхнего UI;
+- НЕ показывать и НЕ анимировать автобус внутри `airport_terminal.webp`: это внутренняя сцена терминала;
 - затем Question 2.
 
 #### 2/15 --- INFORMATION DESK --- BUILD
@@ -433,7 +433,7 @@ Correct:
 После correct:
 - загорается текстовый/HTML-CSS указатель **SHUTTLE →**;
 - не запускать автобус внутри терминала;
-- короткий переход из INFORMATION DESK в MOVING WALKWAY на том же `airport_terminal.png`;
+- короткий переход из INFORMATION DESK в MOVING WALKWAY на том же `airport_terminal.webp`;
 - затем Question 5.
 
 #### 5/15 --- MOVING WALKWAY --- TYPE
@@ -518,10 +518,10 @@ Prompt:
 Correct:
 **Do I need my passport here?**
 
-Во время ввода: наружная сцена `airport_shuttle.png` остаётся живой за счёт лёгких UI/route-индикаторов; отдельный `airport_shuttle_bus.png` может быть виден подъезжающим или стоящим у остановки, но не должен перекрывать task panel.
+Во время ввода: наружная сцена `airport_shuttle.webp` остаётся живой за счёт лёгких UI/route-индикаторов; отдельный `airport_shuttle_bus.webp` может быть виден подъезжающим или стоящим у остановки, но не должен перекрывать task panel.
 
 После correct:
-- `airport_shuttle_bus.png` плавно подъезжает/доводит движение вправо и останавливается у Shuttle Stop;
+- `airport_shuttle_bus.webp` плавно подъезжает/доводит движение вправо и останавливается у Shuttle Stop;
 - короткая реакция route display;
 - route indicator показывает **NEXT → B8**;
 - затем Question 10.
@@ -537,7 +537,7 @@ Correct:
 После correct:
 - route display переключается **B8 → B12**;
 - создать ощущение продвижения лёгким CSS/JS-сдвигом route markers/окружения; не рисовать второй автобус;
-- `airport_shuttle_bus.png` остаётся единым отдельным движущимся shuttle asset;
+- `airport_shuttle_bus.webp` остаётся единым отдельным движущимся shuttle asset;
 - затем Question 11.
 
 #### 11/15 --- AIRPORT SHUTTLE --- BUILD
@@ -565,9 +565,9 @@ Correct:
 После correct:
 - route display переключается **B16 → B20**;
 - появляется/проходит **B20**;
-- `airport_shuttle_bus.png` визуально продолжает движение вправо и уезжает из сцены;
+- `airport_shuttle_bus.webp` визуально продолжает движение вправо и уезжает из сцены;
 - появляется **EXIT → GATES B20–B30**;
-- переход обратно на `airport_terminal.png` в GATES;
+- переход обратно на `airport_terminal.webp` в GATES;
 - затем Question 13.
 
 #### 13/15 --- GATES --- TYPE
@@ -620,12 +620,12 @@ Correct:
 **Where do I show my boarding pass?**
 
 После correct:
-1. `correct.wav`;
+1. `correct.mp3`;
 2. **B24 →** начинает мигать;
 3. Gate B24 / его табло визуально становится главным объектом сцены;
 4. status board делает airport flip:
    `ON TIME` → `BOARDING` → `FINAL CALL`;
-5. проигрывается `airport_ding.wav`;
+5. проигрывается `airport_ding.mp3`;
 6. YOUR JOURNEY обновляется:
    BOARDING PASS ✓ → SECURITY ✓ → GATE B24 ✓;
 7. показать **GATE B24 FOUND ✓**;
@@ -637,13 +637,13 @@ Correct:
 - Движение делать CSS/JS (`transform`, `translate`, `opacity`, лёгкие flip/slide effects).
 - Не создавать отдельный тяжёлый asset для каждого вопроса, если эффект можно сделать HTML/CSS.
 - Использовать утверждённые backgrounds:
-  - `airport_terminal.png` --- НОВАЯ очищенная внутренняя сцена терминала для INFORMATION DESK, MOVING WALKWAY и GATES; верхняя зона изображения специально очищена от крупных рекламных/flight-board/overhead sign элементов, чтобы не конфликтовать с постоянным HUD;
-  - `airport_shuttle.png` --- НОВАЯ наружная сцена Terminal 2 / Shuttle Stop с дорогой справа; используется только для Questions 9--12.
+  - `airport_terminal.webp` --- НОВАЯ очищенная внутренняя сцена терминала для INFORMATION DESK, MOVING WALKWAY и GATES; верхняя зона изображения специально очищена от крупных рекламных/flight-board/overhead sign элементов, чтобы не конфликтовать с постоянным HUD;
+  - `airport_shuttle.webp` --- НОВАЯ наружная сцена Terminal 2 / Shuttle Stop с дорогой справа; используется только для Questions 9--12.
 - Использовать новые отдельные assets:
-  - `airport_shuttle_bus.png` --- отдельный shuttle bus на прозрачном фоне, ориентирован вправо; анимировать CSS/JS поверх `airport_shuttle.png`;
-  - `terminal2_sign.png` --- отдельный знак **TERMINAL 2 →** на прозрачном фоне без верхних подвесов; показывать по сюжету, а не держать постоянно.
-- `airport_shuttle.png` и `airport_shuttle_bus.png` --- разные файлы: первый является background, второй --- отдельным движущимся объектом.
-- Не заставлять `airport_shuttle_bus.png` ехать внутри `airport_terminal.png`.
+  - `airport_shuttle_bus.webp` --- отдельный shuttle bus на прозрачном фоне, ориентирован вправо; анимировать CSS/JS поверх `airport_shuttle.webp`;
+  - `terminal2_sign.webp` --- отдельный знак **TERMINAL 2 →** на прозрачном фоне без верхних подвесов; показывать по сюжету, а не держать постоянно.
+- `airport_shuttle.webp` и `airport_shuttle_bus.webp` --- разные файлы: первый является background, второй --- отдельным движущимся объектом.
+- Не заставлять `airport_shuttle_bus.webp` ехать внутри `airport_terminal.webp`.
 - Не размещать сюжетные direction signs постоянно в верхней части экрана. Верх зарезервирован под постоянные HUD-плашки, YOUR JOURNEY, HOME/audio и instruction/task UI.
 - Остальные динамические указатели (`SHUTTLE →`, `BAGGAGE CLAIM ←`, `B22 →`, `B24 →`, route display, Wi-Fi, ACCEPTED и т. п.) по умолчанию делать HTML/CSS, если отдельный asset не будет согласован позже.
 - Не менять утверждённые 15 correct questions.
@@ -707,46 +707,46 @@ assets/images/
 Использовать существующие файлы точно с этими именами:
 
 ```text
-airport_home.png
-airport_checkin.png
-airport_security.png
-airport_terminal.png
-airport_shuttle.png
-airport_shuttle_bus.png
-terminal2_sign.png
-traveler_walking.png
-traveler_running.png
-suitcase.png
-suitcase_red.png
-suitcase_yellow.png
-airplane.png
-boarding_pass.png
-security_tray.png
-backpack.png
+airport_home.webp
+airport_checkin.webp
+airport_security.webp
+airport_terminal.webp
+airport_shuttle.webp
+airport_shuttle_bus.webp
+terminal2_sign.webp
+traveler_walking.webp
+traveler_running.webp
+suitcase.webp
+suitcase_red.webp
+suitcase_yellow.webp
+airplane.webp
+boarding_pass.webp
+security_tray.webp
+backpack.webp
 ```
 
 Не переименовывать, не заменять и не перерисовывать их без отдельного указания пользователя.
 
 Назначение основных backgrounds:
-- `airport_home.png` — HOME;
-- `airport_checkin.png` — GAME 1 / CHECK-IN;
-- `airport_security.png` — GAME 2 / SECURITY;
-- `airport_terminal.png` — обновлённый очищенный внутренний фон GAME 3 для Information Desk, Moving Walkway и Gates; верх специально оставлен визуально спокойным под HUD и task UI; также может использоваться в подходящих частях FINAL CALL;
-- `airport_shuttle.png` — обновлённый наружный фон Terminal 2 / Shuttle Stop для Questions 9–12; на самом background нет автобуса, чтобы отдельный shuttle можно было анимировать.
+- `airport_home.webp` — HOME;
+- `airport_checkin.webp` — GAME 1 / CHECK-IN;
+- `airport_security.webp` — GAME 2 / SECURITY;
+- `airport_terminal.webp` — обновлённый очищенный внутренний фон GAME 3 для Information Desk, Moving Walkway и Gates; верх специально оставлен визуально спокойным под HUD и task UI; также может использоваться в подходящих частях FINAL CALL;
+- `airport_shuttle.webp` — обновлённый наружный фон Terminal 2 / Shuttle Stop для Questions 9–12; на самом background нет автобуса, чтобы отдельный shuttle можно было анимировать.
 
 Новые GAME 3 assets:
-- `airport_shuttle_bus.png` — отдельный shuttle bus на прозрачном фоне, направлен вправо; используется только как анимируемый объект поверх `airport_shuttle.png`;
-- `terminal2_sign.png` — отдельная прозрачная табличка `TERMINAL 2 →` без подвесов; появляется по сюжету в игровой зоне ниже верхнего интерфейса.
+- `airport_shuttle_bus.webp` — отдельный shuttle bus на прозрачном фоне, направлен вправо; используется только как анимируемый объект поверх `airport_shuttle.webp`;
+- `terminal2_sign.webp` — отдельная прозрачная табличка `TERMINAL 2 →` без подвесов; появляется по сюжету в игровой зоне ниже верхнего интерфейса.
 
 Персонаж:
-- `traveler_walking.png` — обычное движение по аэропорту;
-- `traveler_running.png` — FINAL CALL.
+- `traveler_walking.webp` — обычное движение по аэропорту;
+- `traveler_running.webp` — FINAL CALL.
 
 Остальные:
-- `suitcase.png`, `suitcase_red.png`, `suitcase_yellow.png` — варианты багажа/ответов и SECURITY;
-- `boarding_pass.png` — награда после CHECK-IN;
-- `security_tray.png`, `backpack.png` — SECURITY;
-- `airplane.png` — финальная сцена taxi/runway/takeoff.
+- `suitcase.webp`, `suitcase_red.webp`, `suitcase_yellow.webp` — варианты багажа/ответов и SECURITY;
+- `boarding_pass.webp` — награда после CHECK-IN;
+- `security_tray.webp`, `backpack.webp` — SECURITY;
+- `airplane.webp` — финальная сцена taxi/runway/takeoff.
 
 UI, тексты, questions, answer labels, hearts, HOME, Music/SFX controls, YOUR JOURNEY, CLEARED/INCORRECT, completion messages, FINAL CALL board и кнопки делать HTML/CSS/JS, а не встраивать в backgrounds.
 

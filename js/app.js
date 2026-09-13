@@ -4,6 +4,8 @@
   const shell = document.querySelector('.app-shell');
   const audioToggle = document.getElementById('audio-toggle');
   const audioPanel = document.getElementById('audio-panel');
+  // Pointer/touch interaction within the iframe unlocks music without autoplay.
+  document.addEventListener('pointerdown', () => app.audio.unlock(), { passive: true });
   function setAudioPanel(open) {
     audioPanel.hidden = !open;
     audioToggle.setAttribute('aria-expanded', String(open));
@@ -79,5 +81,5 @@
     });
     app.ui.syncAudio(channel);
   });
-  app.router.show(securityDebug.get('debug') === 'checkin' ? 'checkin' : securityDebug.get('debug') === 'final' ? 'final' : securityDebug.get('debug') === 'questions' ? 'questions' : securityDebug.get('debug') === 'security' ? 'security' : 'home', false);
+  app.router.show(['checkin', 'checkin-last'].includes(securityDebug.get('debug')) ? 'checkin' : securityDebug.get('debug') === 'final' ? 'final' : securityDebug.get('debug') === 'questions' ? 'questions' : ['security', 'security-last'].includes(securityDebug.get('debug')) ? 'security' : 'home', false);
 }(window.AirportRush));

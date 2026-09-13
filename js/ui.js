@@ -1,12 +1,12 @@
 (function (app) {
   'use strict';
   const journeyItems = {
-    boardingPass: { title: 'Boarding Pass', image: 'assets/images/boarding_pass.png' }
+    boardingPass: { title: 'Boarding Pass', image: 'assets/images/boarding_pass.webp' }
   };
   app.ui = {
     journeyMarkup(current) {
       const labels = ['BOARDING PASS', 'SECURITY', 'GATE B24'];
-      return `<aside class="journey-hud" aria-label="Journey"><img src="assets/images/journey_hud.png" alt=""><ol>${labels.map((label, index) => `<li${index === current ? ' aria-current="step"' : ''}${index < current ? ' class="is-collected"' : ''}>${index === 0 && current > 0 ? app.ui.journeyItemMarkup('boardingPass', label) : label}</li>`).join('')}</ol></aside>`;
+      return `<aside class="journey-hud" aria-label="Journey"><img src="assets/images/journey_hud.webp" alt=""><ol>${labels.map((label, index) => `<li${index === current ? ' aria-current="step"' : ''}${index < current ? ' class="is-collected"' : ''}>${index === 0 && current > 0 ? app.ui.journeyItemMarkup('boardingPass', label) : label}</li>`).join('')}</ol></aside>`;
     },
     journeyItemMarkup(id, label) {
       return `<button type="button" class="journey-item-button" data-journey-item="${id}" aria-label="View collected ${label}">${label}</button>`;

@@ -15,7 +15,7 @@
     container.innerHTML = `<section class="gate-final-screen" aria-label="Final Call">
       <div class="gate-final-terminal"></div>
       <div class="gate-final-board" role="status" aria-live="polite"><strong>FINAL CALL</strong><span>FLIGHT AR725 TO LONDON</span><span>GATE B24 — CLOSING</span></div>
-      <div class="gate-final-action" aria-hidden="true"><img class="gate-final-case" src="assets/images/suitcase.png" alt=""><div class="gate-final-lights"></div><div class="gate-final-doors"></div><img class="gate-final-plane" src="assets/images/airplane.png" alt=""></div>
+      <div class="gate-final-action" aria-hidden="true"><img class="gate-final-case" src="assets/images/suitcase.webp" alt=""><div class="gate-final-lights"></div><div class="gate-final-doors"></div><img class="gate-final-plane" src="assets/images/airplane.webp" alt=""></div>
       <div class="gate-final-result" hidden><h1 tabindex="-1">YOU MADE IT! ✈️</h1><p>Have a great flight!</p><button type="button" data-screen="home">HOME</button> <button type="button" data-screen="questions">PLAY AGAIN</button></div>
     </section>`;
     const root = container.querySelector('.gate-final-screen');

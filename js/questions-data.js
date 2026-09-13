@@ -128,8 +128,8 @@
   {
     "type": "type",
     "situation": "One last question!",
-    "answer": "Does this flight go to London?",
-    "prompt": "(to London / go / this flight)"
+    "answer": "Do I need to show my boarding pass?",
+    "prompt": "(my boarding pass / I / need / to show)"
   }
 ];
 }(window.AirportRush));

@@ -191,14 +191,14 @@
       ],
       sounds: {
         music: 'assets/sounds/background_music.mp3',
-        correct: 'assets/sounds/correct.wav',
-        wrong: 'assets/sounds/wrong.wav',
-        click: 'assets/sounds/click.wav',
-        airport_ding: 'assets/sounds/airport_ding.wav',
+        correct: 'assets/sounds/correct.mp3',
+        wrong: 'assets/sounds/wrong.mp3',
+        click: 'assets/sounds/click.mp3',
+        airport_ding: 'assets/sounds/airport_ding.mp3',
         final_success: 'assets/sounds/final_success.mp3',
-        reward: 'assets/sounds/reward.wav',
-        seatbelt: 'assets/sounds/seatbelt.wav',
-        takeoff: 'assets/sounds/takeoff.wav'
+        reward: 'assets/sounds/reward.mp3',
+        seatbelt: 'assets/sounds/seatbelt.mp3',
+        takeoff: 'assets/sounds/takeoff.mp3'
       }
     }
   };

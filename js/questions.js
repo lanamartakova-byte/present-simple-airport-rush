@@ -19,7 +19,7 @@
   const travelTime = 1500; // Boarding movement timing.
   function render(container, start = 1) {
     const questions = app.data.gateQuestions;
-    let index = start === 'complete' ? 14 : Number.isInteger(Number(start)) ? Math.max(0, Math.min(14, Number(start) - 1)) : 0;
+    let index = start === 'complete' || start === 'boarding' ? 14 : Number.isInteger(Number(start)) ? Math.max(0, Math.min(14, Number(start) - 1)) : 0;
     const debugEntry = Number(start) === 6;
     let exitPosition = null;
     let firstLoad = true;
@@ -56,14 +56,14 @@
         </form>
         <div class="questions-world">
           <div class="questions-traveler" aria-label="Traveler standing">
-            <img class="questions-traveler-still" src="assets/images/traveler_still.png" alt="">
+            <img class="questions-traveler-still" src="assets/images/traveler_still.webp" alt="">
             <img class="questions-traveler-walking" src="assets/images/traveler_walking.gif" alt="" hidden>
           </div>
-          <div class="questions-bus-motion" hidden><img class="questions-bus" src="assets/images/airport_shuttle_bus.png" alt="Airport shuttle bus"></div>
+          <div class="questions-bus-motion" hidden><img class="questions-bus" src="assets/images/airport_shuttle_bus.webp" alt="Airport shuttle bus"></div>
         </div>
         <div class="questions-complete" hidden role="region" aria-label="Boarding complete">
           <div class="questions-complete-content">
-          <h1 tabindex="-1">YOU MADE IT! ✈️</h1>
+          <h1 tabindex="-1">YOU MADE IT! <span class="questions-complete-plane">✈️</span></h1>
           <p class="questions-complete-flight">FLIGHT AR725<br>BOARDING COMPLETE</p>
           <p class="questions-complete-story">JUST IN TIME!</p>
           <div class="questions-complete-sparkles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -72,7 +72,7 @@
       </section>`;
     const root = container.querySelector('.questions-screen');
     const hud = document.getElementById('screen-hud');
-    hud.innerHTML = `<div class="checkin-hud"><img src="assets/images/gate_hu.png" alt="FIND YOUR GATE: Questions"><div class="checkin-lives questions-lives" role="status"></div></div>${app.ui.journeyMarkup(2)}`;
+    hud.innerHTML = `<div class="checkin-hud"><img src="assets/images/gate_hu.webp" alt="FIND YOUR GATE: Questions"><div class="checkin-lives questions-lives" role="status"></div></div>${app.ui.journeyMarkup(2)}`;
     const checkpoints = hud.querySelectorAll('.journey-hud li');
     checkpoints[0].querySelector('button').textContent = 'BOARDING PASS ✓';
     checkpoints[1].textContent = 'SECURITY ✓';
@@ -102,7 +102,7 @@
     const choices = root.querySelector('.questions-choices');
     function updateLives() {
       hearts.setAttribute('aria-label', `${lives} lives remaining`);
-      hearts.innerHTML = Array.from({ length: lives }, () => '<img src="assets/images/heart.png" alt="" aria-hidden="true">').join('');
+      hearts.innerHTML = Array.from({ length: lives }, () => '<img src="assets/images/heart.webp" alt="" aria-hidden="true">').join('');
     }
     function lock(value) {
       busy = value;
@@ -163,7 +163,7 @@
       traveler.hidden = zone === 'shuttle';
       bus.hidden = zone !== 'shuttle';
       const suffix = zone === 'exit' ? '_forward' : '';
-      const stillAsset = `assets/images/traveler_still${suffix}.png`;
+      const stillAsset = `assets/images/traveler_still${suffix}.webp`;
       const walkingAsset = `assets/images/traveler_walking${suffix}.gif`;
       if (still.getAttribute('src') !== stillAsset) still.src = stillAsset;
       if (walking.getAttribute('src') !== walkingAsset) walking.src = walkingAsset;
@@ -320,6 +320,11 @@
     build.addEventListener('drop', drop);
     loadQuestion();
     if (start === 'complete') { lock(true); revealCompletion(); }
+    if (start === 'boarding') {
+      lock(true);
+      // Let the final approach position render before the existing boarding movement.
+      later(story, 100);
+    }
     return function () {
       disposed = true;
       completionTitle.removeEventListener('animationstart', playCompletionSound);

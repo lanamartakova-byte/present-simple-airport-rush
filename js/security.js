@@ -1,11 +1,32 @@
 (function (app) {
   'use strict';
-  const objects = ['suitcase.png', 'suitcase_red.png', 'suitcase_yellow.png', 'security_tray.png', 'backpack.png'];
+  const firstItems = ['suitcase_pink.webp', 'backpack_green.webp', 'duffel_purple.webp', 'backpack_brown.webp', 'duffel_black_white.webp'];
+  const baggageItems = ['suitcase.webp', 'duffel_purple.webp', 'suitcase_red.webp', 'suitcase_yellow.webp', 'duffel_black_white.webp', 'suitcase_pink.webp'];
+  const backpackItems = ['backpack.webp', 'backpack_green.webp', 'backpack_brown.webp'];
+  // Balanced visual slots by question: 0 = left, 1 = center, 2 = right.
+  const correctPositions = [1, 0, 2, 1, 2, 0, 0, 1, 2, 0, 2, 1, 2, 1, 0, 2, 0, 1, 1, 0];
 
   function render(container, startStep = 1) {
     const questions = app.data.securityQuestions;
+    // Visual cursors are independent of answer values, grading and answer slots.
+    let firstItemCursor = 0;
+    let rotationCursor = 0;
+    let baggageCursor = 0;
+    let backpackCursor = 0;
+    let trayCursor = 0;
+    function nextItem() {
+      if (firstItemCursor < firstItems.length) return firstItems[firstItemCursor++];
+      if (++trayCursor % 8 === 0) return 'security_tray.webp';
+      // A seven-item rhythm shifts visuals between slots on successive rounds.
+      const backpackTurn = (rotationCursor++ % 7) % 2 === 1;
+      return backpackTurn
+        ? backpackItems[backpackCursor++ % backpackItems.length]
+        : baggageItems[baggageCursor++ % baggageItems.length];
+    }
+
     const step = Number(startStep);
     let index = Number.isInteger(step) && step >= 1 && step <= questions.length ? step - 1 : 0;
+    if (new URLSearchParams(window.location.search).get('debug') === 'security-last') index = questions.length - 1;
     let lives = 3;
     let busy = false;
     let disposed = false;
@@ -13,7 +34,7 @@
     const animations = new Set();
     container.innerHTML = `
       <section class="security-screen" aria-label="Security: Present Simple negative">
-        <div class="security-question"><p class="security-instruction">Choose the correct negative form.</p><img class="security-question-art" src="assets/images/question_panel.png" alt=""><span class="security-number"></span><p id="security-sentence" aria-live="polite"></p></div>
+        <div class="security-question"><p class="security-instruction">Choose the correct negative form.</p><img class="security-question-art" src="assets/images/question_panel.webp" alt=""><span class="security-number"></span><p id="security-sentence" aria-live="polite"></p></div>
         <div class="security-belt-motion" aria-hidden="true"></div>
         <div class="security-options" role="group" aria-labelledby="security-sentence"></div>
         <div class="security-scan" aria-hidden="true"></div>
@@ -21,7 +42,7 @@
       </section>`;
     const root = container.querySelector('.security-screen');
     const hud = document.getElementById('screen-hud');
-    hud.innerHTML = `<div class="checkin-hud"><img src="assets/images/security_hud.png" alt="SECURITY: Negative"><div class="checkin-lives security-lives" role="status"></div></div>${app.ui.journeyMarkup(1)}`;
+    hud.innerHTML = `<div class="checkin-hud"><img src="assets/images/security_hud.webp" alt="SECURITY: Negative"><div class="checkin-lives security-lives" role="status"></div></div>${app.ui.journeyMarkup(1)}`;
     const boardingCheckpoint = hud.querySelector('.journey-item-button');
     boardingCheckpoint.textContent = 'BOARDING PASS ✓';
     const unbindJourney = app.ui.bindJourneyItems(hud);
@@ -51,7 +72,7 @@
 
     function updateLives() {
       hearts.setAttribute('aria-label', `${lives} lives remaining`);
-      hearts.innerHTML = Array.from({ length: lives }, () => '<img src="assets/images/heart.png" alt="" aria-hidden="true">').join('');
+      hearts.innerHTML = Array.from({ length: lives }, () => '<img src="assets/images/heart.webp" alt="" aria-hidden="true">').join('');
     }
 
     function lock(value) {
@@ -73,16 +94,27 @@
         const j = Math.floor(Math.random() * (i + 1));
         [order[i], order[j]] = [order[j], order[i]];
       }
-      order.forEach((answerIndex, slot) => {
+      const assets = order.map(() => nextItem());
+      const duffelSlot = assets.findIndex(asset => asset.startsWith('duffel_'));
+      const targetSlot = correctPositions[index];
+      // Allocate answers before pairing them with images, accounting for the
+      // subsequent whole-item swap that places a duffel in the center.
+      const sourceSlot = duffelSlot < 0 ? targetSlot
+        : targetSlot === 1 ? duffelSlot : targetSlot === duffelSlot ? 1 : targetSlot;
+      const correctSlot = order.findIndex(id => questions[index].options[id] === questions[index].answer);
+      [order[sourceSlot], order[correctSlot]] = [order[correctSlot], order[sourceSlot]];
+      const items = order.map((answerIndex, slot) => ({ answerIndex, asset: assets[slot] }));
+      if (duffelSlot !== -1 && duffelSlot !== 1) [items[1], items[duffelSlot]] = [items[duffelSlot], items[1]];
+      items.forEach(({ answerIndex, asset }, slot) => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'security-object';
+        button.className = 'security-object' + (asset.startsWith('duffel_') ? ' is-duffel' : backpackItems.includes(asset) ? ' is-backpack' : '');
         button.dataset.answer = answerIndex;
         button.dataset.slot = slot;
         button.style.setProperty('--slot', slot);
         button.setAttribute('aria-label', questions[index].options[answerIndex]);
         const image = document.createElement('img');
-        image.src = `assets/images/${objects[(index + slot) % objects.length]}`;
+        image.src = `assets/images/${asset}`;
         image.alt = '';
         image.draggable = false;
         const label = document.createElement('span');

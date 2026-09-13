@@ -7,6 +7,23 @@
     return Math.max(0, Math.min(maxVolume[channel], state[channel].volume * maxVolume[channel] * fadeFraction));
   }
   const effects = new Map();
+  const effectBuffers = new Map();
+  const activeEffects = new Map();
+  let effectContext;
+  let effectGain;
+  function unlockEffects() {
+    const Context = window.AudioContext || window.webkitAudioContext;
+    if (!Context) return;
+    try {
+      if (!effectContext) {
+        effectContext = new Context();
+        effectGain = effectContext.createGain();
+        effectGain.gain.value = playbackVolume('sfx');
+        effectGain.connect(effectContext.destination);
+      }
+      if (effectContext.state === 'suspended') effectContext.resume().catch(function () {});
+    } catch (_) { /* Keep the media-element fallback available. */ }
+  }
   const music = new Audio();
   music.preload = 'none';
   music.src = app.data.sounds.music;
@@ -16,7 +33,6 @@
   let starting = false;
   let fade = 0;
   let generation = 0;
-  let musicFailed = false;
 
   function stopMusic() {
     generation += 1;
@@ -27,12 +43,11 @@
   }
 
   music.addEventListener('error', function () {
-    musicFailed = true;
     stopMusic();
   });
 
   async function startMusic() {
-    if (!unlocked || musicFailed || state.music.muted || !state.music.volume || starting || !music.paused) return;
+    if (!unlocked || state.music.muted || !state.music.volume || starting || !music.paused) return;
     starting = true;
     const token = ++generation;
     music.volume = 0;
@@ -55,6 +70,30 @@
 
   function playEffect(name) {
     if (!unlocked || state.sfx.muted || !state.sfx.volume || name === 'music' || !Object.hasOwn(app.data.sounds, name)) return;
+    if (effectContext && effectGain) {
+      // Reuse decoded buffers; the context is resumed by real user gestures.
+      if (!effectBuffers.has(name)) {
+        effectBuffers.set(name, fetch(app.data.sounds[name])
+          .then(response => { if (!response.ok) throw new Error('Audio unavailable'); return response.arrayBuffer(); })
+          .then(bytes => effectContext.decodeAudioData(bytes))
+          .catch(error => { effectBuffers.delete(name); throw error; }));
+      }
+      const token = {};
+      const previous = activeEffects.get(name);
+      if (previous && previous.source) previous.source.stop();
+      activeEffects.set(name, token);
+      effectBuffers.get(name).then(buffer => {
+        if (activeEffects.get(name) !== token || effectContext.state !== 'running' || state.sfx.muted || !state.sfx.volume) return;
+        const source = effectContext.createBufferSource();
+        source.buffer = buffer;
+        source.loop = false;
+        source.connect(effectGain);
+        token.source = source;
+        source.onended = () => { source.disconnect(); if (activeEffects.get(name) === token) activeEffects.delete(name); };
+        source.start();
+      }).catch(function () {});
+      return;
+    }
     try {
       if (!effects.has(name)) {
         const sound = new Audio(app.data.sounds[name]);
@@ -77,7 +116,13 @@
   }
 
   app.audio = {
-    unlock() { unlocked = true; startMusic(); },
+    unlock() {
+      unlocked = true;
+      unlockEffects();
+      // A transient load/autoplay failure must not disable later gestures.
+      if (music.error) music.load();
+      startMusic();
+    },
     playEffect,
     getState(channel) { return { ...state[channel] }; },
     setVolume(channel, value) {
@@ -90,10 +135,14 @@
           if (!fade && !starting) music.volume = playbackVolume('music');
           startMusic();
         }
-      } else effects.forEach(sound => { sound.volume = playbackVolume('sfx'); });
+      } else {
+        if (effectGain) effectGain.gain.value = playbackVolume('sfx');
+        effects.forEach(sound => { sound.volume = playbackVolume('sfx'); });
+      }
     },
     toggleMute(channel) {
       state[channel].muted = !state[channel].muted;
+      if (channel === 'sfx' && effectGain) effectGain.gain.value = playbackVolume('sfx');
       if (channel === 'music') {
         if (state.music.muted) stopMusic();
         else startMusic();
