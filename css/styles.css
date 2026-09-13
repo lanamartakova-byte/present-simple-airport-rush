@@ -36,10 +36,14 @@ input[type="range"] { width: 90px; height: 28px; margin: 0; accent-color: #21766
 .home-heading { position: absolute; left: 27%; top: 36%; width: 49%; height: 21%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f3f7f8; border-bottom: 4px solid #eab546; padding: 12px; }
 .home-heading h1 { margin: 0; font-size: 48px; font-style: italic; font-weight: 900; text-align: center; }
 .home-heading p { margin: 9px 0 0; font-size: 24px; text-align: center; }
-.game-choices { position: absolute; left: 23%; top: 66%; width: 54%; height: 23%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; background: #edf1f2; }
-.game-card { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 9px; padding: 14px; border: 2px solid #fff8; border-radius: 6px; color: #fff; background: #245b7a; box-shadow: 0 5px 12px #0003; transition: filter 140ms, transform 140ms; }
-.game-card:hover { filter: brightness(1.12); transform: translateY(-3px); }
-.game-card:active { transform: translateY(0); }
+/* Transparent hit areas follow the cards in the current HOME artwork. */
+.game-choices { position: absolute; inset: 0; pointer-events: none; }
+.game-card { position: absolute; top: 47.8%; height: 34.2%; min-width: 0; padding: 0; border: 0; border-radius: 30px; background: transparent; box-shadow: none; pointer-events: auto; }
+.game-card.checkin { left: 16.7%; width: 21.5%; background: transparent; }
+.game-card.security { left: 39.6%; width: 20.9%; background: transparent; }
+.game-card.questions { left: 62%; width: 21.4%; background: transparent; }
+.game-card > * { opacity: 0; }
+.game-card:hover, .game-card:active { transform: none; }
 .game-card strong { font-size: 19px; text-align: left; }
 .game-card > span:last-child { font-size: 16px; }
 .card-arrow { font-size: 27px; line-height: 1; }

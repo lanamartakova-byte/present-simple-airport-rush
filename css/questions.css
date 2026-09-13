@@ -60,13 +60,25 @@
 [data-zone="boarding"] .questions-task { left: 365px; width: 710px; }
 [data-zone="boarding"] .questions-panel { padding-left: 78px; padding-right: 24px; }
 [data-zone="boarding"] .questions-world { clip-path: none; }
-.questions-complete { position: absolute; z-index: 1; inset: 240px 250px auto; padding: 32px; text-align: center; border: 3px solid #e9bb47; border-radius: 18px; background: #082a49f5; }
-.questions-complete h1 { color: #ffe075; font-size: 49px; margin: 0; }
-.questions-complete p { font-size: 27px; margin: 18px 0; }
-.questions-complete .questions-complete-flight { color: #baffd7; font-size: 23px; line-height: 1.5; }
-.questions-complete button { min-width: 170px; margin: 10px 5px 0; padding: 10px 24px; border: 2px solid #f4c442; border-radius: 8px; color: #fff7df; background: linear-gradient(#28618a, #082a49 65%, #061d34); box-shadow: inset 0 2px 1px #ffffff65, 0 4px 8px #0005; font-size: 21px; font-weight: 700; }
-
+.questions-complete { position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; text-align: center; background: #03142755; animation: questions-finale-shade 650ms ease both; }
+.questions-complete-content { position: relative; isolation: isolate; overflow: hidden; width: 900px; padding: 48px 40px; border: 2px solid #e9bb47b3; border-radius: 24px; background: linear-gradient(145deg, #123c5cc7, #061d34d1); box-shadow: inset 0 1px 0 #fff2, 0 18px 48px #03142766; }
+.questions-complete-content::before { content: ''; position: absolute; z-index: -1; width: 880px; height: 380px; left: 50%; top: 87px; transform: translate(-50%, -50%); background: radial-gradient(ellipse, #ffe28a9e 0%, #ffd15b70 20%, #ffc34d30 44%, transparent 72%); pointer-events: none; animation: questions-finale-shade 650ms ease both; }
+.questions-complete h1 { color: #ffe69b; font-size: 68px; margin: 0 0 26px; text-shadow: 0 3px 10px #031427, 0 0 28px #ffcd6380; animation: questions-finale-reveal 700ms 250ms ease both; }
+.questions-complete .questions-complete-flight { color: #eef7ff; font-size: 23px; line-height: 1.7; letter-spacing: 3px; margin: 0; text-shadow: 0 2px 6px #031427; animation: questions-finale-reveal 700ms 600ms ease both; }
+.questions-complete .questions-complete-story { color: #ffdc73; font-size: 32px; font-weight: 800; letter-spacing: 4px; margin: 28px 0 0; text-shadow: 0 2px 8px #031427; animation: questions-finale-reveal 700ms 950ms ease both; }
+.questions-complete-sparkles { position: absolute; inset: 0; pointer-events: none; animation: questions-finale-shade 900ms 1300ms both; }
+.questions-complete-sparkles i { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fff0b5; box-shadow: 0 0 8px 3px #ffd36590; animation: questions-finale-twinkle 2800ms ease-in-out infinite alternate; }
+.questions-complete-sparkles i:nth-child(1) { left: 12%; top: 15%; }
+.questions-complete-sparkles i:nth-child(2) { left: 27%; top: 2%; animation-delay: 400ms; width: 4px; height: 4px; }
+.questions-complete-sparkles i:nth-child(3) { left: 48%; top: 8%; animation-delay: 1100ms; }
+.questions-complete-sparkles i:nth-child(4) { right: 25%; top: 1%; animation-delay: 700ms; width: 4px; height: 4px; }
+.questions-complete-sparkles i:nth-child(5) { right: 11%; top: 22%; animation-delay: 1500ms; }
+.questions-complete-sparkles i:nth-child(6) { right: 19%; top: 38%; animation-delay: 900ms; width: 4px; height: 4px; }
+@keyframes questions-finale-twinkle { from { opacity: .25; transform: scale(.7); } to { opacity: 1; transform: scale(1.15); } }
+@keyframes questions-finale-shade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes questions-finale-reveal { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @media (prefers-reduced-motion: reduce) {
+  .questions-complete *, .questions-complete-content::before { animation-delay: 0ms !important; }
   .questions-screen *, .gate-final-screen * { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
 }
 /* Automatic GAME 3 reward: movement comes from surroundings and the plane. */

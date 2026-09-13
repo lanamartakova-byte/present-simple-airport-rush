@@ -66,10 +66,6 @@
     home(container) {
       container.innerHTML = `
         <section class="home-screen">
-          <div class="departure-board" aria-label="Departure information">
-            <span class="flight">FLIGHT AR725</span><strong>LONDON</strong>
-            <div class="flight-details"><time>18:45</time><span>GATE B24</span></div>
-          </div>
           <nav class="game-choices" aria-label="Mini-games">
             ${app.data.games.map(game => `<button type="button" class="game-card ${game.id}" data-screen="${game.id}"><span class="card-arrow" aria-hidden="true">&#8599;</span><strong>${game.title}</strong><span>${game.grammar}</span></button>`).join('')}
           </nav>

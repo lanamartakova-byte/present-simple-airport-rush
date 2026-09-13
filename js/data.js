@@ -195,6 +195,7 @@
         wrong: 'assets/sounds/wrong.wav',
         click: 'assets/sounds/click.wav',
         airport_ding: 'assets/sounds/airport_ding.wav',
+        final_success: 'assets/sounds/final_success.mp3',
         reward: 'assets/sounds/reward.wav',
         seatbelt: 'assets/sounds/seatbelt.wav',
         takeoff: 'assets/sounds/takeoff.wav'

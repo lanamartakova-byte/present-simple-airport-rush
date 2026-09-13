@@ -9,7 +9,7 @@
   // Q1–10 retain their routes. Boarding has independent apron/stair anchors.
   const paths = {
     terminal: [[730,770], [795,760], [860,750]],
-    exit: [[660,760], [635,746], [610,732], [590,718]],
+    exit: [[925,785,1.00], [825,693,.94], [725,601,.88], [625,509,.82]],
     boarding: [[500,685,.60], [610,665,.60], [710,640,.60], [825,605,.60], [942,433,.58], [1060,264,.56]]
   };
   // Flat side-view road. All bus travel changes X only.
@@ -19,8 +19,9 @@
   const travelTime = 1500; // Boarding movement timing.
   function render(container, start = 1) {
     const questions = app.data.gateQuestions;
-    let index = Number.isInteger(Number(start)) ? Math.max(0, Math.min(14, Number(start) - 1)) : 0;
+    let index = start === 'complete' ? 14 : Number.isInteger(Number(start)) ? Math.max(0, Math.min(14, Number(start) - 1)) : 0;
     const debugEntry = Number(start) === 6;
+    let exitPosition = null;
     let firstLoad = true;
     let lives = 3;
     let busy = false;
@@ -61,11 +62,12 @@
           <div class="questions-bus-motion" hidden><img class="questions-bus" src="assets/images/airport_shuttle_bus.png" alt="Airport shuttle bus"></div>
         </div>
         <div class="questions-complete" hidden role="region" aria-label="Boarding complete">
+          <div class="questions-complete-content">
           <h1 tabindex="-1">YOU MADE IT! ✈️</h1>
           <p class="questions-complete-flight">FLIGHT AR725<br>BOARDING COMPLETE</p>
-          <p>Have a great flight!</p>
-          <button type="button" data-screen="home">HOME</button>
-          <button type="button" data-screen="questions">PLAY AGAIN</button>
+          <p class="questions-complete-story">JUST IN TIME!</p>
+          <div class="questions-complete-sparkles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
         </div>
       </section>`;
     const root = container.querySelector('.questions-screen');
@@ -85,6 +87,14 @@
     const slots = root.querySelector('.questions-slots');
     const cards = root.querySelector('.questions-cards');
     const complete = root.querySelector('.questions-complete');
+    const completionTitle = complete.querySelector('h1');
+    let completionSoundPlayed = false;
+    function playCompletionSound(event) {
+      if (disposed || complete.hidden || completionSoundPlayed || event.target !== completionTitle || event.animationName !== 'questions-finale-reveal') return;
+      completionSoundPlayed = true;
+      app.audio.playEffect('final_success');
+    }
+    completionTitle.addEventListener('animationstart', playCompletionSound);
     const bus = root.querySelector('.questions-bus-motion');
     const traveler = root.querySelector('.questions-traveler');
     const still = root.querySelector('.questions-traveler-still');
@@ -120,7 +130,7 @@
       renderCards();
     }
     function positionTraveler(point) {
-      traveler.style.transform = `translate(${point[0]}px, ${point[1]}px)` + (root.dataset.zone === 'boarding' ? ` scale(${point[2]})` : '');
+      traveler.style.transform = `translate(${point[0]}px, ${point[1]}px)` + (root.dataset.zone === 'boarding' || root.dataset.zone === 'exit' ? ` scale(${point[2]})` : '');
     }
     function setWalking(value) {
       // Both images share the same foot anchor and visible body height.
@@ -159,7 +169,10 @@
       if (walking.getAttribute('src') !== walkingAsset) walking.src = walkingAsset;
       setWalking(false);
       traveler.classList.remove('is-walking', 'is-exiting');
-      if (zone !== 'shuttle') positionTraveler(paths[zone][pathIndex(zone, index)]);
+      if (zone === 'exit') {
+        if (changedZone || !exitPosition) exitPosition = [...paths.exit[pathIndex(zone, index)]];
+        positionTraveler(exitPosition);
+      } else if (zone !== 'shuttle') positionTraveler(paths[zone][pathIndex(zone, index)]);
       bus.classList.add('is-positioning');
       if (zone === 'shuttle') positionBus(arriving ? roadEntry : stops[index - 5]);
       void bus.offsetWidth;
@@ -191,6 +204,15 @@
         later(() => { form.hidden = false; lock(false); if (focus) focusAttempt(); }, 1800);
       } else if (focus) focusAttempt();
     }
+    function revealCompletion() {
+      traveler.hidden = true;
+      checkpoints[2].textContent = 'GATE B24 ✓';
+      checkpoints[2].removeAttribute('aria-current');
+      checkpoints[2].classList.add('is-collected');
+      form.hidden = true;
+      complete.hidden = false;
+      complete.querySelector('h1').focus({ preventScroll: true });
+    }
     function story() {
       root.classList.add('is-correct');
       const zone = root.dataset.zone;
@@ -203,20 +225,18 @@
         positionTraveler(paths[zone][pathIndex(zone, index) + 1]);
       }
       later(() => {
+        if (zone === 'exit') {
+          exitPosition = [...paths.exit[pathIndex(zone, index) + 1]];
+          positionTraveler(exitPosition);
+        }
         setWalking(false);
         traveler.classList.remove('is-walking');
         if (index === 14) {
           // Boarding is the payoff; never route into the legacy cinematic.
           traveler.classList.add('is-exiting');
           later(() => {
-            traveler.hidden = true;
             app.audio.playEffect('airport_ding');
-            checkpoints[2].textContent = 'GATE B24 ✓';
-            checkpoints[2].removeAttribute('aria-current');
-            checkpoints[2].classList.add('is-collected');
-            form.hidden = true;
-            complete.hidden = false;
-            complete.querySelector('h1').focus({ preventScroll: true });
+            revealCompletion();
           }, 180);
         } else if (index === 1 || index === 4 || index === 9) {
           if (index === 4) traveler.classList.add('is-exiting');
@@ -299,8 +319,10 @@
     build.addEventListener('dragover', dragOver);
     build.addEventListener('drop', drop);
     loadQuestion();
+    if (start === 'complete') { lock(true); revealCompletion(); }
     return function () {
       disposed = true;
+      completionTitle.removeEventListener('animationstart', playCompletionSound);
       timers.forEach(clearTimeout);
       unbindJourney();
       hud.replaceChildren();
