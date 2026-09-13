@@ -4,7 +4,9 @@
 
   function render(container) {
     const questions = app.data.checkinQuestions;
-    let index = 0;
+    const debug = new URLSearchParams(window.location.search);
+    const step = debug.get('debug') === 'checkin' ? Number(debug.get('step')) : 1;
+    let index = Number.isInteger(step) && step >= 1 && step <= questions.length ? step - 1 : 0;
     let lives = 3;
     let busy = false;
     let disposed = false;
@@ -139,6 +141,19 @@
         boardingPass.remove();
         app.ui.collectBoardingPass(hud);
         sentence.textContent = 'CHECK-IN COMPLETE';
+        const next = document.createElement('button');
+        next.type = 'button';
+        next.className = 'completion-panel-hit';
+        next.setAttribute('aria-label', 'Continue to Security');
+        next.addEventListener('click', function (event) {
+          event.stopPropagation();
+          if (disposed || next.disabled) return;
+          next.disabled = true;
+          app.audio.unlock();
+          app.audio.playEffect('click');
+          app.router.show('security');
+        }, { once: true });
+        root.querySelector('.checkin-question').append(next);
       };
     }
 
@@ -193,6 +208,10 @@
 
     baggage.addEventListener('click', answer);
     loadQuestion();
+    if (debug.get('debug') === 'checkin' && debug.get('step') === 'complete') {
+      lock(true);
+      complete();
+    }
     return function () {
       disposed = true;
       unbindJourney();

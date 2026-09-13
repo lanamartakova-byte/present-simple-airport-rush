@@ -18,7 +18,6 @@
         <div class="security-options" role="group" aria-labelledby="security-sentence"></div>
         <div class="security-scan" aria-hidden="true"></div>
         <p class="security-feedback" role="status" aria-live="polite"></p>
-        <button type="button" class="security-continue" data-screen="home" hidden>CONTINUE →</button>
       </section>`;
     const root = container.querySelector('.security-screen');
     const hud = document.getElementById('screen-hud');
@@ -104,11 +103,19 @@
       checkpoint.textContent = 'SECURITY ✓';
       checkpoint.setAttribute('aria-label', 'Security cleared');
       app.audio.playEffect('reward');
-      later(function () {
-        const next = root.querySelector('.security-continue');
-        next.hidden = false;
-        next.focus({ preventScroll: true });
-      }, 2400);
+      const next = document.createElement('button');
+      next.type = 'button';
+      next.className = 'completion-panel-hit';
+      next.setAttribute('aria-label', 'Continue to Find Your Gate');
+      next.addEventListener('click', function (event) {
+        event.stopPropagation();
+        if (disposed || next.disabled) return;
+        next.disabled = true;
+        app.audio.unlock();
+        app.audio.playEffect('click');
+        app.router.show('questions');
+      }, { once: true });
+      root.querySelector('.security-question').append(next);
     }
 
     function answer(event) {
@@ -170,6 +177,11 @@
 
     options.addEventListener('click', answer);
     loadQuestion();
+    if (startStep === 'complete') {
+      lock(true);
+      options.replaceChildren();
+      complete();
+    }
     return function () {
       disposed = true;
       timers.forEach(clearTimeout);

@@ -18,6 +18,10 @@ h1:focus { outline: none; }
 .hud-button:hover { filter: brightness(1.15); }
 .hud-button:active { box-shadow: inset 0 2px 4px #0008; }
 .hud-button svg { width: 29px; height: 29px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* HOME already includes the two large control faces in its artwork. */
+.app-shell:has(.home-screen) .hud-actions { position: absolute; top: 66px; right: 1px; gap: 16px; }
+.app-shell:has(.home-screen) .hud-button { width: 69px; height: 66px; border: 0; background: transparent; box-shadow: none; }
+.app-shell:has(.home-screen) .hud-button svg { visibility: hidden; }
 .audio-controls { position: absolute; right: 0; top: calc(100% + 12px); width: 290px; display: grid; gap: 16px; padding: 18px; border: 1px solid #e9bb47; border-radius: 8px; color: #fff; background: #082a49f5; box-shadow: 0 6px 18px #0006; }
 .audio-controls[hidden] { display: none; }
 .audio-channel { display: grid; grid-template-columns: 48px 1fr 34px; align-items: center; gap: 10px; }
@@ -107,3 +111,6 @@ input[type="range"] { width: 90px; height: 28px; margin: 0; accent-color: #21766
 @media (prefers-reduced-motion: reduce) {
   .suitcase-answer, .suitcase-answer.is-wrong { animation: none; }
 }
+
+/* Invisible navigation over the existing panel artwork, including its chevron. */
+.checkin-question > .completion-panel-hit, .security-question > .completion-panel-hit { position: absolute; z-index: 1; inset: 29% 1% 33.15%; padding: 0; border: 0; background: transparent; box-shadow: none; cursor: pointer; }
