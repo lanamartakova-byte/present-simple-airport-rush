@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AIRPORT RUSH - Don't Miss Your Flight!</title>
+</head>
+<body>
+<script>
+(async function () {
+  // This stable shell is safe to cache: it never embeds a deployment version.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const manifestURL = new URL('release.json', location.href);
+      manifestURL.searchParams.set('check', Date.now() + '-' + Math.random().toString(36).slice(2));
+      const response = await fetch(manifestURL, { cache: 'no-store' });
+      if (!response.ok) throw new Error('Release unavailable');
+      const release = await response.json();
+      if (!/^[a-f0-9]{16}$/.test(release.version)) throw new Error('Invalid release');
+      const gameURL = new URL('game.html', location.href);
+      gameURL.searchParams.set('v', release.version);
+      const game = await fetch(gameURL);
+      if (!game.ok) throw new Error('Game unavailable');
+      const html = await game.text();
+      if (!html.includes('name="airport-build" content="' + release.version + '"')) throw new Error('Release still publishing');
+      // Keep the public URL, query/debug parameters and relative asset base intact.
+      document.open();
+      document.write(html);
+      document.close();
+      return;
+    } catch (_) {
+      if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+  const message = document.createElement('p');
+  message.textContent = 'The game could not be loaded. Please reload to try again.';
+  document.body.append(message);
+}());
+</script>
+</body>
+</html>
