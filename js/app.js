@@ -33,26 +33,36 @@
   // Use the same literal URLs as the scenes; the Pages build versions these too.
   const sharedImages = [
     'assets/images/question_panel.webp', 'assets/images/journey_hud.webp',
-    'assets/images/heart.webp', 'assets/images/boarding_pass.webp',
-    'assets/images/answer_label.webp', 'assets/images/suitcase.webp',
-    'assets/images/suitcase_red.webp', 'assets/images/suitcase_yellow.webp',
-    'assets/images/suitcase_pink.webp', 'assets/images/backpack.webp',
-    'assets/images/backpack_green.webp', 'assets/images/backpack_brown.webp',
-    'assets/images/duffel_purple.webp', 'assets/images/duffel_black_white.webp'
+    'assets/images/heart.webp'
+  ];
+  const firstBaggage = [
+    'assets/images/suitcase_pink.webp', 'assets/images/backpack_green.webp',
+    'assets/images/duffel_purple.webp'
   ];
   const sceneImages = {
-    checkin: ['assets/images/airport_checkin.webp?v=1e3a3443dc14', 'assets/images/checkin_hud.webp', ...sharedImages],
-    security: ['assets/images/airport_security.webp', 'assets/images/security_hud.webp', 'assets/images/security_tray.webp', ...sharedImages],
+    checkin: ['assets/images/airport_checkin.webp?v=1e3a3443dc14', 'assets/images/checkin_hud.webp', ...sharedImages, 'assets/images/answer_label.webp', ...firstBaggage],
+    security: ['assets/images/airport_security.webp', 'assets/images/security_hud.webp', ...sharedImages, ...firstBaggage, 'assets/images/boarding_pass.webp', 'assets/images/security_tray.webp'],
     questions: [
       'assets/images/airport_terminal.webp', 'assets/images/gate_hu.webp',
-      'assets/images/question_panel.webp', 'assets/images/journey_hud.webp',
-      'assets/images/heart.webp', 'assets/images/boarding_pass.webp',
-      'assets/images/traveler_still.webp', 'assets/images/traveler_walking.gif',
+      ...sharedImages, 'assets/images/traveler_still.webp',
+      'assets/images/traveler_walking.gif', 'assets/images/boarding_pass.webp'
+    ],
+    final: ['assets/images/airport_terminal.webp', 'assets/images/suitcase.webp', 'assets/images/airplane.webp']
+  };
+  const laterBaggage = [
+    'assets/images/suitcase.webp', 'assets/images/suitcase_red.webp',
+    'assets/images/suitcase_yellow.webp', 'assets/images/backpack.webp',
+    'assets/images/backpack_brown.webp', 'assets/images/duffel_black_white.webp',
+    'assets/images/boarding_pass.webp'
+  ];
+  const laterImages = {
+    checkin: laterBaggage,
+    security: laterBaggage,
+    questions: [
       'assets/images/airport_exit.webp', 'assets/images/traveler_still_forward.webp',
       'assets/images/traveler_walking_forward.gif', 'assets/images/airport_shuttle.webp',
       'assets/images/airport_shuttle_bus.webp', 'assets/images/airport_boarding_bg.webp'
-    ],
-    final: ['assets/images/airport_terminal.webp', 'assets/images/suitcase.webp', 'assets/images/airplane.webp']
+    ]
   };
   const imageLoads = new Map();
   const readyScenes = new Set();
@@ -111,8 +121,13 @@
     preloadImage('assets/images/airport_home.webp', true).then(() => {
       // Give HOME two paint opportunities before starting background downloads.
       requestAnimationFrame(() => requestAnimationFrame(() => {
-        Promise.all([preloadScene('checkin'), preloadScene('security')])
-          .then(() => preloadScene('questions')).catch(() => { homePreloadScheduled = false; });
+        const groups = ['checkin', 'security', 'questions'].map(id => sceneImages[id]);
+        // Round-robin enqueueing gives all three games a download slot immediately.
+        for (let i = 0; i < Math.max(...groups.map(group => group.length)); i++) {
+          groups.forEach(group => { if (group[i]) preloadImage(group[i]).catch(() => {}); });
+        }
+        Promise.all(['checkin', 'security', 'questions'].map(id => preloadScene(id)))
+          .catch(() => { homePreloadScheduled = false; });
       }));
     }).catch(() => { homePreloadScheduled = false; });
   }
@@ -132,15 +147,32 @@
         container.dataset.screen = id;
         if (focus) container.querySelector('h1')?.focus({ preventScroll: true });
         if (id === 'home') preloadFromHome();
-        if (id === 'security') preloadScene('questions').catch(() => {});
+        if (laterImages[id]) requestAnimationFrame(() => requestAnimationFrame(() => {
+          laterImages[id].forEach(url => preloadImage(url).catch(() => {}));
+        }));
       }
-      if (!sceneImages[id] || readyScenes.has(id)) display();
+      // Debug entries still wait for the actual section they open.
+      const debugStep = id === 'questions' ? questionsDebugStep : 1;
+      const extraImages = id !== 'questions' ? []
+        : ['complete', 'boarding'].includes(debugStep) || Number(debugStep) >= 11 ? ['assets/images/airport_boarding_bg.webp']
+        : Number(debugStep) >= 6 ? ['assets/images/airport_shuttle.webp', 'assets/images/airport_shuttle_bus.webp']
+        : Number(debugStep) >= 3 ? ['assets/images/airport_exit.webp', 'assets/images/traveler_still_forward.webp', 'assets/images/traveler_walking_forward.gif'] : [];
+      if ((!sceneImages[id] || readyScenes.has(id)) && !extraImages.length) display();
       else {
         // Preserve the current rendered scene until every required image decodes.
         // A newer navigation request supersedes an older pending transition.
-        preloadScene(id, true).then(display).catch(() => {
-          // Keep the intact previous screen; a later navigation can retry.
-        });
+        let retryDelay = 1000;
+        function waitForImages() {
+          if (request !== navigationRequest) return;
+          Promise.all([preloadScene(id, true), ...extraImages.map(url => preloadImage(url, true))])
+            .then(display).catch(() => {
+              // Retain the chosen destination through transient load failures.
+              if (request !== navigationRequest) return;
+              setTimeout(waitForImages, retryDelay);
+              retryDelay = Math.min(retryDelay * 2, 10000);
+            });
+        }
+        waitForImages();
       }
     }
   };
