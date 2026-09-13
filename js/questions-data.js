@@ -105,9 +105,9 @@
   },
   {
     "type": "type",
-    "situation": "Make a question.",
-    "answer": "Do I need my boarding pass?",
-    "prompt": "(my boarding pass / need / I)"
+  "situation": "Make a question.",
+  "answer": "Where do I show my ticket?",
+  "prompt": "(my ticket / where / show / I / do)"
   },
   {
     "type": "choose",
@@ -122,8 +122,8 @@
   {
     "type": "fix",
     "situation": "",
-    "answer": "Does the flight leave now?",
-    "prompt": "Does the flight leaves now?"
+    "answer": "What time this flight leaves?",
+    "prompt": "What time does this flight leave?"
   },
   {
     "type": "type",
