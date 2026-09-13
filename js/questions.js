@@ -9,7 +9,7 @@
   // Exit anchors share the destination center line; boarding has independent apron/stair anchors.
   const paths = {
     terminal: [[730,770], [795,760], [860,750]],
-    exit: [[625,785,1.00], [625,693,1.00], [625,601,1.00], [625,509,1.00]],
+    exit: [[625,785,1.10], [625,693,1.0333333], [625,601,.9666667], [625,509,.90]],
     boarding: [[500,685,.60], [610,665,.60], [710,640,.60], [825,605,.60], [910,433,.58], [1060,264,.56]]
   };
   // Flat side-view road. All bus travel changes X only.

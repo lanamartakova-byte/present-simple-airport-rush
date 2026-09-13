@@ -55,7 +55,7 @@
 :is([data-zone="terminal"], [data-zone="exit"]) .questions-world { clip-path: none; }
 
 /* New forward pair calibrated to the same 330px body/foot anchor as the exit traveler. */
-[data-zone="exit"] .questions-traveler-still { height: 336.574px; left: -111.753px; bottom: -3.287px; }
+[data-zone="exit"] .questions-traveler-still { height: 316.37956px; left: -105.04782px; bottom: -3.08978px; }
 [data-zone="exit"] .questions-traveler-walking { height: 367.622px; left: -132.484px; bottom: -11.824px; }
 [data-zone="exit"] .questions-traveler, [data-zone="exit"] .questions-traveler * { pointer-events: none; }
 /* Enlarge only the shuttle scene, keeping the existing road/foot anchor. */
