@@ -30,17 +30,118 @@
   }
   window.addEventListener('resize', fitViewport);
   fitViewport();
+  // Use the same literal URLs as the scenes; the Pages build versions these too.
+  const sharedImages = [
+    'assets/images/question_panel.webp', 'assets/images/journey_hud.webp',
+    'assets/images/heart.webp', 'assets/images/boarding_pass.webp',
+    'assets/images/answer_label.webp', 'assets/images/suitcase.webp',
+    'assets/images/suitcase_red.webp', 'assets/images/suitcase_yellow.webp',
+    'assets/images/suitcase_pink.webp', 'assets/images/backpack.webp',
+    'assets/images/backpack_green.webp', 'assets/images/backpack_brown.webp',
+    'assets/images/duffel_purple.webp', 'assets/images/duffel_black_white.webp'
+  ];
+  const sceneImages = {
+    checkin: ['assets/images/airport_checkin.webp?v=1e3a3443dc14', 'assets/images/checkin_hud.webp', ...sharedImages],
+    security: ['assets/images/airport_security.webp', 'assets/images/security_hud.webp', 'assets/images/security_tray.webp', ...sharedImages],
+    questions: [
+      'assets/images/airport_terminal.webp', 'assets/images/gate_hu.webp',
+      'assets/images/question_panel.webp', 'assets/images/journey_hud.webp',
+      'assets/images/heart.webp', 'assets/images/boarding_pass.webp',
+      'assets/images/traveler_still.webp', 'assets/images/traveler_walking.gif',
+      'assets/images/airport_exit.webp', 'assets/images/traveler_still_forward.webp',
+      'assets/images/traveler_walking_forward.gif', 'assets/images/airport_shuttle.webp',
+      'assets/images/airport_shuttle_bus.webp', 'assets/images/airport_boarding_bg.webp'
+    ],
+    final: ['assets/images/airport_terminal.webp', 'assets/images/suitcase.webp', 'assets/images/airplane.webp']
+  };
+  const imageLoads = new Map();
+  const readyScenes = new Set();
+  const imageQueue = [];
+  let activeImages = 0;
+  function pumpImages() {
+    while (activeImages < 3 && imageQueue.length) {
+      const entry = imageQueue.shift();
+      activeImages++;
+      const picture = entry.picture;
+      picture.onload = async function () {
+        try {
+          if (picture.decode) await picture.decode();
+          entry.resolve();
+        } catch (error) {
+          imageLoads.delete(entry.url);
+          entry.reject(error);
+        } finally {
+          activeImages--;
+          pumpImages();
+        }
+      };
+      picture.onerror = function () {
+        imageLoads.delete(entry.url);
+        entry.reject(new Error('Image unavailable: ' + entry.url));
+        activeImages--;
+        pumpImages();
+      };
+      picture.src = entry.url;
+    }
+  }
+  function preloadImage(url, urgent = false) {
+    let entry = imageLoads.get(url);
+    if (!entry) {
+      entry = { url, picture: new Image() };
+      entry.promise = new Promise((resolve, reject) => { entry.resolve = resolve; entry.reject = reject; });
+      imageLoads.set(url, entry);
+      imageQueue.push(entry);
+    }
+    if (urgent) {
+      const pending = imageQueue.indexOf(entry);
+      if (pending > 0) { imageQueue.splice(pending, 1); imageQueue.unshift(entry); }
+    }
+    pumpImages();
+    return entry.promise;
+  }
+  function preloadScene(id, urgent = false) {
+    if (readyScenes.has(id)) return Promise.resolve();
+    return Promise.all((sceneImages[id] || []).map(url => preloadImage(url, urgent)))
+      .then(() => { readyScenes.add(id); });
+  }
+  let homePreloadScheduled = false;
+  function preloadFromHome() {
+    if (homePreloadScheduled) return;
+    homePreloadScheduled = true;
+    preloadImage('assets/images/airport_home.webp', true).then(() => {
+      // Give HOME two paint opportunities before starting background downloads.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        Promise.all([preloadScene('checkin'), preloadScene('security')])
+          .then(() => preloadScene('questions')).catch(() => { homePreloadScheduled = false; });
+      }));
+    }).catch(() => { homePreloadScheduled = false; });
+  }
   const screens = new Map();
   let cleanup;
+  let navigationRequest = 0;
   app.router = {
     register(id, render) { screens.set(id, render); },
     show(id, focus = true) {
       const render = screens.get(id);
       if (!render) return;
-      if (typeof cleanup === 'function') cleanup();
-      cleanup = render(container);
-      container.dataset.screen = id;
-      if (focus) container.querySelector('h1')?.focus({ preventScroll: true });
+      const request = ++navigationRequest;
+      function display() {
+        if (request !== navigationRequest) return;
+        if (typeof cleanup === 'function') cleanup();
+        cleanup = render(container);
+        container.dataset.screen = id;
+        if (focus) container.querySelector('h1')?.focus({ preventScroll: true });
+        if (id === 'home') preloadFromHome();
+        if (id === 'security') preloadScene('questions').catch(() => {});
+      }
+      if (!sceneImages[id] || readyScenes.has(id)) display();
+      else {
+        // Preserve the current rendered scene until every required image decodes.
+        // A newer navigation request supersedes an older pending transition.
+        preloadScene(id, true).then(display).catch(() => {
+          // Keep the intact previous screen; a later navigation can retry.
+        });
+      }
     }
   };
   app.router.register('home', app.ui.home);
