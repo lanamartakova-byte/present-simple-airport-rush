@@ -1,8 +1,9 @@
 (function (app) {
   'use strict';
-  const firstItems = ['suitcase_pink.webp', 'backpack_green.webp', 'duffel_purple.webp', 'backpack_brown.webp', 'duffel_black_white.webp'];
-  const baggageItems = ['suitcase.webp', 'duffel_purple.webp', 'suitcase_red.webp', 'suitcase_yellow.webp', 'duffel_black_white.webp', 'suitcase_pink.webp'];
-  const backpackItems = ['backpack.webp', 'backpack_green.webp', 'backpack_brown.webp'];
+  const firstItems = ['security_tray.webp', 'security_tray_one.webp', 'security_tray_two.webp', 'security_tray_three.webp', 'security_tray_four.webp', 'security_tray_five.webp', 'security_tray_six.webp', 'security_tray_seven.webp'];
+  // Preserve the existing six-item / three-item rotation after the first cycle.
+  const baggageItems = [firstItems[1], firstItems[2], firstItems[3], firstItems[4], firstItems[5], firstItems[6]];
+  const backpackItems = [firstItems[7], firstItems[2], firstItems[4]];
   // Balanced visual slots by question: 0 = left, 1 = center, 2 = right.
   const correctPositions = [1, 0, 2, 1, 2, 0, 0, 1, 2, 0, 2, 1, 2, 1, 0, 2, 0, 1, 1, 0];
 
@@ -94,7 +95,13 @@
         const j = Math.floor(Math.random() * (i + 1));
         [order[i], order[j]] = [order[j], order[i]];
       }
-      const assets = order.map(() => nextItem());
+      const assets = [];
+      order.forEach(() => {
+        let asset = nextItem();
+        // Advance the existing cycle past trays already shown in this question.
+        while (assets.includes(asset)) asset = nextItem();
+        assets.push(asset);
+      });
       const duffelSlot = assets.findIndex(asset => asset.startsWith('duffel_'));
       const targetSlot = correctPositions[index];
       // Allocate answers before pairing them with images, accounting for the
@@ -108,7 +115,7 @@
       items.forEach(({ answerIndex, asset }, slot) => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'security-object' + (asset.startsWith('duffel_') ? ' is-duffel' : backpackItems.includes(asset) ? ' is-backpack' : '');
+        button.className = 'security-object';
         button.dataset.answer = answerIndex;
         button.dataset.slot = slot;
         button.style.setProperty('--slot', slot);

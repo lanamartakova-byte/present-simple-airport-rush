@@ -4,14 +4,14 @@
 .security-question { position: absolute; top: 80px; left: 50%; width: 960px; aspect-ratio: 3 / 1; transform: translateX(-50%); color: #fff; }
 .security-question-art { display: block; width: 100%; height: 100%; object-fit: contain; }
 #security-sentence { position: absolute; inset: 34% 13% 38%; display: grid; place-items: center; padding: 8px 68px; text-align: center; font-size: 27px; line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
-.security-number { position: absolute; left: 14%; top: 34%; width: 5%; height: 28%; display: grid; place-items: center; color: #ffe075; font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.security-number { position: absolute; left: 14%; top: 34%; width: 5%; height: 28%; display: grid; place-items: center; color: #fff; font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .security-number[hidden] { display: none; }
-.security-instruction { position: absolute; left: 50%; bottom: calc(71% + 10px); width: max-content; transform: translateX(-50%); margin: 0; padding: 8px 16px; border: 1px solid #f4c442; border-radius: 8px; background: #082a49ed; text-align: center; color: #fff; font-size: 19px; line-height: 1.2; font-weight: 600; }
+.security-instruction { position: absolute; left: 50%; bottom: calc(71% + 10px); width: max-content; transform: translateX(-50%); margin: 0; padding: 8px 16px; border: 1px solid #fff; border-radius: 8px; background: #082a49ed; text-align: center; color: #fff; font-size: 19px; line-height: 1.2; font-weight: 600; }
 .security-options { position: absolute; inset: 0; pointer-events: none; }
 .security-object { position: absolute; left: calc(780px + var(--slot) * 200px); top: calc(430px + var(--slot) * 24px); width: 200px; height: 210px; border: 0; padding: 0; background: transparent; transform-origin: center bottom; pointer-events: auto; }
 .security-object > img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(4px 8px 4px #0006); }
-.security-object > span { position: absolute; top: 100%; left: -10px; width: 220px; min-height: 58px; display: grid; place-items: center; padding: 8px; border: 2px solid #eac04c; border-radius: 6px; color: #fff; background: #082a49f5; font-size: 19px; line-height: 1.15; text-align: center; }
-.security-object:not(:disabled):hover > img { filter: drop-shadow(0 0 6px #ffe075); }
+.security-object > span { position: absolute; top: 100%; left: -10px; width: 220px; min-height: 58px; display: grid; place-items: center; padding: 8px; border: 2px solid #fff; border-radius: 6px; color: #fff; background: #082a49f5; font-size: 19px; line-height: 1.15; text-align: center; }
+.security-object:not(:disabled):hover > img { filter: drop-shadow(0 0 6px #fff); }
 .security-object:disabled { cursor: default; }
 .security-object.is-selected > span { visibility: hidden; }
 .security-object.is-waiting { visibility: hidden; }
@@ -33,3 +33,12 @@
 .security-object.is-backpack > img { transform: scale(.85); transform-origin: center bottom; }
 
 .security-object > img[src="assets/images/suitcase.webp"], .security-object > img[src="assets/images/suitcase_red.webp"], .security-object > img[src="assets/images/suitcase_yellow.webp"], .security-object > img[src="assets/images/suitcase_pink.webp"] { transform: scale(1.15); transform-origin: center bottom; }
+
+/* Match visible tray width and belt baseline to security_tray.webp (alpha bounds). */
+.security-object > img[src="assets/images/security_tray_one.webp"] { transform: translate(0.056px, -0.505px) scale(0.992533); transform-origin: center bottom; }
+.security-object > img[src="assets/images/security_tray_two.webp"] { transform: translate(0.056px, -0.255px) scale(0.995965); transform-origin: center bottom; }
+.security-object > img[src="assets/images/security_tray_three.webp"] { transform: translate(0.508px, -0.560px) scale(1.000579); transform-origin: center bottom; }
+.security-object > img[src="assets/images/security_tray_four.webp"] { transform: translate(0.392px, -0.609px) scale(0.993675); transform-origin: center bottom; }
+.security-object > img[src="assets/images/security_tray_five.webp"] { transform: translate(0.000px, -0.613px) scale(0.993103); transform-origin: center bottom; }
+.security-object > img[src="assets/images/security_tray_six.webp"] { transform: translate(-0.055px, -1.279px) scale(0.976823); transform-origin: center bottom; }
+.security-object > img[src="assets/images/security_tray_seven.webp"] { transform: translate(0.220px, -1.165px) scale(0.977376); transform-origin: center bottom; }

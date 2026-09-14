@@ -32,7 +32,7 @@
   fitViewport();
   // Use the same literal URLs as the scenes; the Pages build versions these too.
   const sharedImages = [
-    'assets/images/question_panel.webp', 'assets/images/journey_hud.webp',
+    'assets/images/question_panel.webp', 'assets/images/journey_hud.webp?v=51fb4c60a311',
     'assets/images/heart.webp'
   ];
   const firstBaggage = [
@@ -41,7 +41,7 @@
   ];
   const sceneImages = {
     checkin: ['assets/images/airport_checkin.webp?v=1e3a3443dc14', 'assets/images/checkin_hud.webp', ...sharedImages, 'assets/images/answer_label.webp', ...firstBaggage],
-    security: ['assets/images/airport_security.webp', 'assets/images/security_hud.webp', ...sharedImages, ...firstBaggage, 'assets/images/boarding_pass.webp', 'assets/images/security_tray.webp'],
+    security: ['assets/images/airport_security.webp', 'assets/images/security_hud.webp', ...sharedImages, 'assets/images/boarding_pass.webp', 'assets/images/security_tray.webp', 'assets/images/security_tray_one.webp', 'assets/images/security_tray_two.webp'],
     questions: [
       'assets/images/airport_terminal.webp', 'assets/images/gate_hu.webp',
       ...sharedImages, 'assets/images/traveler_still.webp',
@@ -57,7 +57,7 @@
   ];
   const laterImages = {
     checkin: laterBaggage,
-    security: laterBaggage,
+    security: ['assets/images/security_tray_three.webp', 'assets/images/security_tray_four.webp', 'assets/images/security_tray_five.webp', 'assets/images/security_tray_six.webp', 'assets/images/security_tray_seven.webp'],
     questions: [
       'assets/images/airport_exit.webp', 'assets/images/traveler_still_forward.webp',
       'assets/images/traveler_walking_forward.gif', 'assets/images/airport_shuttle.webp',
