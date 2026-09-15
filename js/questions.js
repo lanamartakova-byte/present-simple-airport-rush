@@ -150,6 +150,7 @@
       (type === 'build' ? cards.querySelector('button') : type === 'choose' ? choices.querySelector('button') : input)?.focus({ preventScroll: true });
     }
     function loadQuestion(focus = false) {
+      if (index === 5 || index === 10) lives = 3;
       const question = questions[index];
       const zone = index < 2 ? 'terminal' : index < 5 ? 'exit' : index < 10 ? 'shuttle' : 'boarding';
       const changedZone = root.dataset.zone !== zone;

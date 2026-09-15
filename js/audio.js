@@ -1,10 +1,11 @@
 (function (app) {
   'use strict';
   const state = { music: { volume: 0.30, muted: false }, sfx: { volume: 0.40, muted: false } };
-  const maxVolume = { music: 0.20, sfx: 0.25 };
+  const maxVolume = { music: 0.10, sfx: 0.25 };
   function playbackVolume(channel, fadeFraction = 1) {
     if (state[channel].muted) return 0;
-    return Math.max(0, Math.min(maxVolume[channel], state[channel].volume * maxVolume[channel] * fadeFraction));
+    const volume = Math.max(0, Math.min(maxVolume[channel], state[channel].volume * maxVolume[channel] * fadeFraction));
+    return channel === 'music' ? volume * 0.25 : volume * 0.35;
   }
   const effects = new Map();
   const effectBuffers = new Map();

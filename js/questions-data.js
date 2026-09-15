@@ -107,7 +107,7 @@
     "type": "type",
   "situation": "Make a question.",
   "answer": "Where do I show my ticket?",
-  "prompt": "(my ticket / where / show / I / do)"
+  "prompt": "(my ticket / where / show / I)"
   },
   {
     "type": "choose",
